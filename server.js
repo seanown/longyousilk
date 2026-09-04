@@ -15,7 +15,10 @@ const crypto = require('crypto');
 
 // ===== 設定區（都可以自己改）=====
 const PORT = process.env.PORT || 3000;   // 雲端平台會自己給 PORT，本機則用 3000
-const ADMIN_PASSWORD = 'lys2026';          // 後台登入密碼，請改成你自己的
+// ⚠️ 這個 repo 是公開的，密碼不要寫在這裡！
+// 線上（Render）的密碼在 Render 後台的環境變數 ADMIN_PASSWORD 設定。
+// 本機沒有設環境變數時，就用下面的 lys2026（只在你自己電腦，不外洩）。
+const ADMIN_PASSWORD = process.env.ADMIN_PASSWORD || 'lys2026';
 const MAX_UPLOAD_MB = 20;
 // ================================
 

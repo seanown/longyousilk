@@ -43,7 +43,10 @@ Windows 用戶直接雙擊 `一鍵啟動網站.bat` 也可以。
 ## 三、⚠️ 重要警告
 
 1. **不要重跑 `build.py`**，它會覆蓋 `index.html` 的手動修改。要跑之前先備份。
-2. **後台預設密碼是 `lys2026`，上線前一定要改**（在 `server.js` 第 18 行 `ADMIN_PASSWORD`）。
+2. **密碼絕對不要寫進 `server.js`** —— 這個 repo 是公開的，寫進去全世界都看得到。
+   密碼走環境變數 `ADMIN_PASSWORD`：
+   - **線上（Render）**：去 Render 後台 → Environment → 加 `ADMIN_PASSWORD`
+   - **本機**：沒設環境變數時會用 `lys2026`（只在你自己電腦，不外洩）
 3. `.gitignore` 已排除 `backups/` 與 `*.bak`，備份檔不會進 repo。
 
 ---
@@ -55,10 +58,10 @@ Windows 用戶直接雙擊 `一鍵啟動網站.bat` 也可以。
 
 已內建 `render.yaml`，Render 上選「New Web Service → 連這個 repo」就會自動帶入設定。
 
-部署前必須處理：
-- [ ] 改掉 `ADMIN_PASSWORD`（目前 `lys2026`）
-- [ ] 注意：多數免費平台的硬碟是**暫存的**，重啟後 `data/*.json` 的修改會掉。
-      正式上線建議改用資料庫，或直接接受「後台改資料僅本機有效、線上用 repo 裡的資料」。
+部署後必須處理：
+- [ ] 在 Render 後台設環境變數 `ADMIN_PASSWORD`（**不要寫在程式碼裡**，repo 是公開的）
+- [ ] 注意：免費方案的硬碟是**暫存的**，重啟後後台改的 `data/*.json` 會掉。
+      建議工作流程：**後台只在本機用** → 改完 commit + push → Render 自動重新部署。
 
 ---
 

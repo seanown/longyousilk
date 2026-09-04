@@ -10,3 +10,7 @@ services:
         value: "22"
       - key: PORT
         value: "3000"
+      # 後台密碼：值不要在這裡寫（repo 是公開的），
+      # 部署後去 Render 後台 → Environment → 手動加 ADMIN_PASSWORD
+      - key: ADMIN_PASSWORD
+        sync: false
