@@ -5,6 +5,33 @@
 
 ---
 
+## 🔴 目前狀態（2026-09-05 01:30 實測）
+
+**網站已經上線：https://longyousilk.onrender.com**
+
+| 檢查項 | 結果 |
+|---|---|
+| 首頁 | ✅ HTTP 200 |
+| 後台 `/admin/` | ✅ HTTP 200 |
+| API（products / categories / settings / applications） | ✅ 全部 200 |
+| 作品圖（8 張） | ✅ 正常載入（如 neon-kowloon.jpg = 719,707 bytes） |
+| 展覽資料 | ✅ 有資料（Cyber Orient、Sean Own — Silk & Vision…） |
+| **後台密碼** | 🔴 **未設定 — 任何人都能用 `lys2026` 登入** |
+
+### 實測證據
+
+```
+用 lys2026     → {"ok":true,"token":"eca2c1dd..."}   ← 登得進去，危險
+用 S@ndj1313#  → {"ok":false,"error":"wrong_password"} ← 新密碼無效
+```
+
+這代表 `server.js` 的環境變數改動**已經上線了**，
+但 Render 後台的 `ADMIN_PASSWORD` **還沒填**，所以程式退回預設值 `lys2026`。
+
+👉 **現在就做下面的第 2 步。**
+
+---
+
 ## 第 0 步：先記住這兩件事
 
 1. **你的後台密碼是 `S@ndj1313#`** — 但這組密碼**沒有寫在程式碼裡**（下面第 2 步會告訴你去哪裡填）。
@@ -32,7 +59,7 @@
    - **Instance Type**：**Free**
 7. 往下滑，按 **`Create Web Service`**
 8. 等約 2 分鐘，出現綠色 **Live** 就成功了
-9. 它會給你一個網址，長得像 `https://lys-longyousilk.onrender.com`
+9. 它會給你一個網址，長得像 `https://longyousilk.onrender.com`
    → **先開起來看一下，網站應該會出現**
 
 ---
@@ -92,14 +119,14 @@
 2. 找到 **Custom Domains** → 按 **Add Custom Domain**
 3. 輸入 `longyousilk.com`（和 `www.longyousilk.com`，加兩次）
 4. Render 會顯示一組 **CNAME 目標**，長得像
-   `lys-longyousilk.onrender.com`
+   `longyousilk.onrender.com`
    **把這串抄下來**
 
 **回 Name.com 設定 DNS**：
 1. 進 Name.com 的域名管理 → 找 **DNS Records**
 2. 加兩筆紀錄：
-   - **Type**：`CNAME`　**Host**：`www`　**Answer**：`lys-longyousilk.onrender.com`
-   - **Type**：`ALIAS` 或 `ANAME`（如果沒有，就用 `CNAME` + Host `@`）　→ 同樣指向 `lys-longyousilk.onrender.com`
+   - **Type**：`CNAME`　**Host**：`www`　**Answer**：`longyousilk.onrender.com`
+   - **Type**：`ALIAS` 或 `ANAME`（如果沒有，就用 `CNAME` + Host `@`）　→ 同樣指向 `longyousilk.onrender.com`
 3. 存檔
 
 **等生效**：通常幾分鐘，最慢 24–48 小時。
