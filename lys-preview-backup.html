@@ -1,0 +1,1382 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>LYS — Long You Silk | Art Redefine</title>
+<link rel="stylesheet" href="https://miaoda.feishu.cn/fonts/css2?family=Cormorant+Garamond:ital,wght@0,400;0,600;0,700;1,400;1,600&family=Inter:wght@300;400;500;600;700&display=swap">
+<style>
+/* ===== Design Tokens — Red / Gold / White ===== */
+:root {
+  --red: #A02020;
+  --red-deep: #7A1818;
+  --red-light: #C41E3A;
+  --red-soft: rgba(160,32,32,0.08);
+  --gold: #C9A96E;
+  --gold-light: #D4BC8A;
+  --gold-dark: #9A7D4F;
+  --gold-soft: rgba(201,169,110,0.15);
+  --white: #FFFFFF;
+  --ivory: #FAF7F0;
+  --ivory-deep: #F0EBE0;
+  --ink: #1C1C1C;
+  --ink-soft: #3A3A3A;
+  --ink-muted: #6B6B6B;
+  --line: rgba(28,28,28,0.1);
+  --line-gold: rgba(201,169,110,0.4);
+  --line-red: rgba(160,32,32,0.25);
+  --shadow: 0 4px 24px rgba(28,28,28,0.07);
+  --shadow-lg: 0 12px 48px rgba(28,28,28,0.12);
+  --serif: 'Cormorant Garamond', Georgia, serif;
+  --sans: 'Inter', -apple-system, sans-serif;
+}
+* { margin: 0; padding: 0; box-sizing: border-box; }
+html { scroll-behavior: smooth; }
+body {
+  font-family: var(--sans);
+  background: var(--ivory);
+  color: var(--ink);
+  line-height: 1.7;
+  -webkit-font-smoothing: antialiased;
+}
+a { color: inherit; text-decoration: none; }
+button { font-family: inherit; cursor: pointer; border: none; background: none; }
+img { display: block; max-width: 100%; }
+
+/* ===== Silk Texture ===== */
+.silk-bg {
+  background-color: var(--ivory);
+  background-image:
+    repeating-linear-gradient(0deg, transparent, transparent 2px, rgba(201,169,110,0.012) 2px, rgba(201,169,110,0.012) 3px),
+    repeating-linear-gradient(90deg, transparent, transparent 2px, rgba(201,169,110,0.012) 2px, rgba(201,169,110,0.012) 3px);
+}
+
+/* ===== Fu Pattern Logo (黻纹) ===== */
+.fu-logo { display: inline-flex; align-items: center; gap: 12px; }
+.fu-mark {
+  width: 38px; height: 38px; border-radius: 50%;
+  border: 1.5px solid var(--gold);
+  display: flex; align-items: center; justify-content: center;
+  background: var(--white);
+  flex-shrink: 0;
+}
+.fu-mark svg { width: 24px; height: 24px; color: var(--red); }
+.fu-text { display: flex; flex-direction: column; line-height: 1.1; }
+.fu-text .brand { font-family: var(--serif); font-weight: 700; font-size: 20px; letter-spacing: 4px; color: var(--ink); }
+.fu-text .tagline { font-size: 9px; letter-spacing: 2.5px; color: var(--gold-dark); text-transform: uppercase; font-weight: 500; }
+
+/* ===== Navigation ===== */
+.nav {
+  position: fixed; top: 0; left: 0; right: 0; z-index: 100;
+  background: rgba(250,247,240,0.94);
+  backdrop-filter: blur(14px);
+  border-bottom: 1px solid var(--line);
+}
+.nav-inner {
+  max-width: 1320px; margin: 0 auto; padding: 0 32px;
+  display: flex; align-items: center; justify-content: space-between;
+  height: 72px;
+}
+.nav-links { display: flex; gap: 32px; align-items: center; }
+.nav-links a {
+  font-size: 12px; font-weight: 500; color: var(--ink-soft);
+  transition: color 0.2s; position: relative; padding: 4px 0;
+  text-transform: uppercase; letter-spacing: 1.2px;
+}
+.nav-links a:hover, .nav-links a.active { color: var(--red); }
+.nav-links a.active::after {
+  content: ''; position: absolute; bottom: -2px; left: 0; right: 0;
+  height: 2px; background: var(--red);
+}
+.nav-cta {
+  background: var(--red); color: var(--white);
+  padding: 10px 24px; font-size: 11px; font-weight: 600;
+  letter-spacing: 1.5px; transition: all 0.25s; text-transform: uppercase;
+}
+.nav-cta:hover { background: var(--red-deep); }
+.hamburger { display: none; flex-direction: column; gap: 5px; padding: 8px; }
+.hamburger span { width: 22px; height: 2px; background: var(--ink); transition: 0.3s; }
+
+/* ===== Views ===== */
+.view { display: none; min-height: 100vh; padding-top: 72px; }
+.view.active { display: block; animation: fadeIn 0.4s ease; }
+@keyframes fadeIn { from { opacity: 0; transform: translateY(8px); } to { opacity: 1; transform: translateY(0); } }
+.container { max-width: 1320px; margin: 0 auto; padding: 0 32px; }
+
+/* ===== Home Hero ===== */
+.hero {
+  position: relative; min-height: 88vh; display: flex; align-items: center;
+  overflow: hidden; background: var(--ink);
+}
+.hero-bg { position: absolute; inset: 0; z-index: 0; }
+.hero-bg img { width: 100%; height: 100%; object-fit: cover; opacity: 0.45; }
+.hero-overlay {
+  position: absolute; inset: 0; z-index: 1;
+  background: linear-gradient(135deg, rgba(122,24,24,0.65) 0%, rgba(28,28,28,0.55) 50%, rgba(201,169,110,0.2) 100%);
+}
+.hero-content { position: relative; z-index: 2; max-width: 1320px; margin: 0 auto; padding: 0 32px; width: 100%; }
+.hero-eyebrow {
+  display: inline-flex; align-items: center; gap: 12px;
+  color: var(--gold-light); font-size: 11px; letter-spacing: 5px;
+  font-weight: 600; margin-bottom: 28px; text-transform: uppercase;
+}
+.hero-eyebrow::before { content: ''; width: 40px; height: 1px; background: var(--gold); }
+.hero h1 {
+  font-family: var(--serif); font-weight: 600; font-style: italic;
+  font-size: clamp(42px, 6.5vw, 82px); line-height: 1.08;
+  color: var(--white); margin-bottom: 24px; letter-spacing: 0.5px;
+}
+.hero h1 em { font-style: normal; color: var(--gold-light); font-weight: 700; }
+.hero-sub {
+  font-size: 16px; color: rgba(255,255,255,0.78);
+  max-width: 540px; margin-bottom: 40px; line-height: 1.95; font-weight: 300;
+}
+.hero-actions { display: flex; gap: 16px; flex-wrap: wrap; }
+.btn-primary {
+  background: var(--red); color: var(--white);
+  padding: 15px 38px; font-size: 12px; font-weight: 600;
+  letter-spacing: 2.5px; transition: all 0.25s; text-transform: uppercase;
+}
+.btn-primary:hover { background: var(--red-light); transform: translateY(-1px); }
+.btn-ghost {
+  border: 1px solid rgba(255,255,255,0.4); color: var(--white);
+  padding: 15px 38px; font-size: 12px; font-weight: 500;
+  letter-spacing: 2.5px; transition: all 0.25s; text-transform: uppercase;
+}
+.btn-ghost:hover { border-color: var(--gold-light); color: var(--gold-light); }
+
+/* ===== Dual-Use Banner ===== */
+.dualuse-banner {
+  background: var(--white); padding: 56px 0; position: relative;
+  border-top: 3px solid var(--red); border-bottom: 1px solid var(--line);
+}
+.dualuse-inner {
+  max-width: 1320px; margin: 0 auto; padding: 0 32px;
+  display: grid; grid-template-columns: 1fr 1fr; gap: 48px; align-items: center;
+}
+.dualuse-icon {
+  display: flex; gap: 24px; margin-bottom: 20px;
+}
+.dualuse-icon .di-box {
+  flex: 1; padding: 24px; text-align: center;
+  border: 1px solid var(--line-gold); background: var(--ivory);
+}
+.dualuse-icon .di-box .di-label { font-size: 10px; letter-spacing: 2px; color: var(--gold-dark); text-transform: uppercase; margin-bottom: 6px; font-weight: 600; }
+.dualuse-icon .di-box .di-title { font-family: var(--serif); font-size: 20px; font-weight: 600; color: var(--ink); font-style: italic; }
+.dualuse-text h3 { font-family: var(--serif); font-size: 30px; font-weight: 600; margin-bottom: 16px; font-style: italic; letter-spacing: 0.5px; }
+.dualuse-text h3 span { color: var(--red); }
+.dualuse-text p { font-size: 14px; color: var(--ink-soft); line-height: 2; margin-bottom: 16px; font-weight: 300; }
+.dualuse-text .dualuse-note { font-size: 12px; color: var(--ink-muted); font-style: italic; padding-left: 16px; border-left: 2px solid var(--gold); }
+
+/* ===== Drop Countdown ===== */
+.drop-banner {
+  background: var(--ink); color: var(--white);
+  padding: 56px 0; position: relative; overflow: hidden;
+}
+.drop-banner::before {
+  content: ''; position: absolute; top: 0; left: 0; right: 0; height: 2px;
+  background: linear-gradient(90deg, transparent, var(--red), var(--gold), transparent);
+}
+.drop-inner {
+  max-width: 1320px; margin: 0 auto; padding: 0 32px;
+  display: flex; align-items: center; justify-content: space-between; gap: 40px; flex-wrap: wrap;
+}
+.drop-info h3 { font-family: var(--serif); font-size: 28px; font-weight: 600; margin-bottom: 8px; letter-spacing: 0.5px; font-style: italic; }
+.drop-info p { color: rgba(255,255,255,0.6); font-size: 14px; }
+.drop-countdown { display: flex; gap: 28px; }
+.countdown-unit { text-align: center; }
+.countdown-num { font-family: var(--serif); font-size: 44px; font-weight: 700; color: var(--gold-light); line-height: 1; }
+.countdown-label { font-size: 10px; color: rgba(255,255,255,0.45); letter-spacing: 2px; margin-top: 6px; text-transform: uppercase; }
+
+/* ===== Section ===== */
+.section { padding: 80px 0; }
+.section-head {
+  display: flex; align-items: flex-end; justify-content: space-between;
+  margin-bottom: 48px; flex-wrap: wrap; gap: 16px;
+}
+.section-title {
+  font-family: var(--serif); font-size: 34px; font-weight: 600;
+  letter-spacing: 0.5px; position: relative; padding-left: 22px; font-style: italic;
+}
+.section-title::before {
+  content: ''; position: absolute; left: 0; top: 6px; bottom: 6px;
+  width: 4px; background: var(--red);
+}
+.section-sub { color: var(--ink-muted); font-size: 14px; margin-top: 8px; padding-left: 22px; font-weight: 300; }
+.section-link {
+  font-size: 12px; color: var(--red); font-weight: 600;
+  letter-spacing: 1.5px; display: flex; align-items: center; gap: 6px;
+  transition: gap 0.2s; text-transform: uppercase;
+}
+.section-link:hover { gap: 12px; }
+
+/* ===== 12 Categories ===== */
+.cat-groups { margin-bottom: 48px; }
+.cat-group-label {
+  font-size: 11px; font-weight: 700; letter-spacing: 3px;
+  color: var(--gold-dark); text-transform: uppercase; margin-bottom: 16px;
+  padding-bottom: 8px; border-bottom: 1px solid var(--line-gold);
+  display: flex; align-items: center; gap: 10px;
+}
+.cat-group-label::after { content: ''; flex: 1; height: 1px; background: var(--line); }
+.cat-grid {
+  display: grid; grid-template-columns: repeat(4, 1fr); gap: 16px; margin-bottom: 32px;
+}
+.cat-card {
+  padding: 24px 20px; border: 1px solid var(--line); background: var(--white);
+  cursor: pointer; transition: all 0.3s; position: relative; overflow: hidden;
+}
+.cat-card::before {
+  content: ''; position: absolute; top: 0; left: 0; width: 100%; height: 3px;
+  background: var(--red); transform: scaleX(0); transform-origin: left; transition: transform 0.3s;
+}
+.cat-card:hover { border-color: var(--line-red); transform: translateY(-3px); box-shadow: var(--shadow); }
+.cat-card:hover::before { transform: scaleX(1); }
+.cat-num { font-family: var(--serif); font-size: 13px; font-weight: 700; color: var(--gold); opacity: 0.6; margin-bottom: 10px; }
+.cat-name { font-family: var(--serif); font-size: 18px; font-weight: 600; margin-bottom: 4px; font-style: italic; color: var(--ink); }
+.cat-name-zh { font-size: 11px; color: var(--ink-muted); letter-spacing: 1px; margin-bottom: 10px; }
+.cat-desc { font-size: 12px; color: var(--ink-muted); line-height: 1.7; font-weight: 300; }
+
+/* ===== Product Card ===== */
+.product-grid {
+  display: grid; grid-template-columns: repeat(auto-fill, minmax(280px, 1fr));
+  gap: 32px;
+}
+.product-card {
+  background: var(--white); border: 1px solid var(--line);
+  transition: all 0.3s; cursor: pointer; position: relative; overflow: hidden;
+}
+.product-card:hover { transform: translateY(-4px); box-shadow: var(--shadow-lg); border-color: var(--line-red); }
+.product-img-wrap {
+  position: relative; aspect-ratio: 2/3; overflow: hidden;
+  background: var(--ivory-deep);
+}
+.product-img-wrap img { width: 100%; height: 100%; object-fit: cover; transition: transform 0.5s ease; }
+.product-card:hover .product-img-wrap img { transform: scale(1.05); }
+.product-badge {
+  position: absolute; top: 14px; left: 14px; z-index: 2;
+  padding: 5px 12px; font-size: 10px; font-weight: 700;
+  letter-spacing: 1.5px; text-transform: uppercase;
+}
+.badge-collector { background: var(--red); color: var(--white); }
+.badge-standard { background: var(--ink-soft); color: var(--white); }
+.badge-nft { background: linear-gradient(135deg, var(--gold), var(--gold-dark)); color: var(--white); }
+.badge-soldout {
+  position: absolute; top: 50%; left: 50%; transform: translate(-50%, -50%) rotate(-10deg);
+  z-index: 3; border: 2px solid var(--red); color: var(--red);
+  padding: 8px 24px; font-family: var(--serif); font-size: 18px;
+  font-weight: 700; letter-spacing: 3px; background: rgba(255,255,255,0.94);
+  text-transform: uppercase;
+}
+.product-soldout-overlay { position: absolute; inset: 0; background: rgba(28,28,28,0.3); z-index: 2; }
+.product-cat-tag {
+  position: absolute; top: 14px; right: 14px; z-index: 2;
+  padding: 4px 10px; font-size: 9px; font-weight: 600;
+  letter-spacing: 1px; background: rgba(255,255,255,0.9); color: var(--ink-soft);
+  text-transform: uppercase;
+}
+.product-info { padding: 20px; }
+.product-name { font-family: var(--serif); font-size: 19px; font-weight: 600; margin-bottom: 4px; letter-spacing: 0.5px; font-style: italic; }
+.product-artist { font-size: 12px; color: var(--ink-muted); margin-bottom: 12px; letter-spacing: 0.5px; }
+.product-meta {
+  display: flex; justify-content: space-between; align-items: center;
+  padding-top: 12px; border-top: 1px solid var(--line);
+}
+.product-edition { font-size: 11px; color: var(--ink-muted); letter-spacing: 0.5px; text-transform: uppercase; }
+.product-price { font-family: var(--serif); font-size: 20px; font-weight: 700; color: var(--red); }
+
+/* ===== Shop Filters ===== */
+.shop-header { padding: 48px 0 28px; }
+.shop-filters {
+  display: flex; gap: 8px; margin-bottom: 16px; flex-wrap: wrap;
+}
+.filter-btn {
+  padding: 8px 18px; border: 1px solid var(--line);
+  font-size: 11px; color: var(--ink-soft); transition: all 0.2s;
+  background: transparent; letter-spacing: 0.8px;
+  text-transform: uppercase; font-weight: 500;
+}
+.filter-btn:hover { border-color: var(--red); color: var(--red); }
+.filter-btn.active { background: var(--red); color: var(--white); border-color: var(--red); }
+.shop-cat-row { display: flex; gap: 6px; margin-bottom: 32px; flex-wrap: wrap; }
+.cat-chip {
+  padding: 6px 14px; font-size: 11px; border: 1px solid var(--line-gold);
+  color: var(--gold-dark); background: var(--white); cursor: pointer;
+  transition: all 0.2s; font-weight: 500;
+}
+.cat-chip:hover { border-color: var(--red); color: var(--red); }
+.cat-chip.active { background: var(--gold-soft); border-color: var(--gold); color: var(--ink); font-weight: 600; }
+
+/* ===== Product Detail ===== */
+.product-detail { padding: 48px 0 80px; }
+.detail-layout { display: grid; grid-template-columns: 1fr 1fr; gap: 64px; align-items: start; }
+.detail-gallery { position: sticky; top: 100px; }
+.detail-main-img {
+  aspect-ratio: 2/3; background: var(--ivory-deep);
+  border: 1px solid var(--line); overflow: hidden; position: relative;
+}
+.detail-main-img img { width: 100%; height: 100%; object-fit: cover; }
+.detail-thumbs { display: flex; gap: 12px; margin-top: 16px; }
+.detail-thumb {
+  width: 72px; height: 96px; border: 2px solid transparent;
+  cursor: pointer; overflow: hidden; transition: border-color 0.2s;
+}
+.detail-thumb.active { border-color: var(--red); }
+.detail-thumb img { width: 100%; height: 100%; object-fit: cover; }
+.detail-info h2 { font-family: var(--serif); font-size: 38px; font-weight: 600; letter-spacing: 0.5px; margin-bottom: 8px; font-style: italic; }
+.detail-artist { font-size: 14px; color: var(--ink-muted); margin-bottom: 24px; display: flex; align-items: center; gap: 8px; font-weight: 300; }
+.detail-artist .dot { width: 4px; height: 4px; background: var(--gold); border-radius: 50%; }
+.detail-cat-badge {
+  display: inline-block; padding: 4px 14px; font-size: 10px; font-weight: 600;
+  letter-spacing: 1.5px; text-transform: uppercase; margin-bottom: 20px;
+  background: var(--gold-soft); color: var(--gold-dark); border: 1px solid var(--line-gold);
+}
+.detail-price-row {
+  display: flex; align-items: baseline; gap: 16px; margin-bottom: 32px;
+  padding-bottom: 24px; border-bottom: 1px solid var(--line);
+}
+.detail-price { font-family: var(--serif); font-size: 40px; font-weight: 700; color: var(--red); }
+.detail-price-note { font-size: 13px; color: var(--ink-muted); }
+.option-group { margin-bottom: 28px; }
+.option-label {
+  font-size: 12px; font-weight: 600; color: var(--ink-soft);
+  margin-bottom: 12px; letter-spacing: 1.5px;
+  display: flex; justify-content: space-between; text-transform: uppercase;
+}
+.option-label .hint { font-weight: 400; color: var(--ink-muted); font-size: 11px; text-transform: none; letter-spacing: 0; }
+.size-options { display: flex; gap: 10px; flex-wrap: wrap; }
+.size-opt {
+  padding: 12px 18px; border: 1px solid var(--line);
+  font-size: 13px; text-align: center; transition: all 0.2s;
+  cursor: pointer; min-width: 120px; flex: 1;
+}
+.size-opt .size-name { font-weight: 600; margin-bottom: 2px; font-family: var(--serif); font-size: 15px; }
+.size-opt .size-dim { font-size: 11px; color: var(--ink-muted); }
+.size-opt .size-price { font-size: 11px; color: var(--red); font-weight: 600; margin-top: 4px; }
+.size-opt:hover { border-color: var(--red); }
+.size-opt.active { border-color: var(--red); background: var(--red-soft); }
+.delivery-options { display: flex; flex-direction: column; gap: 10px; }
+.delivery-opt {
+  padding: 16px 20px; border: 1px solid var(--line);
+  display: flex; justify-content: space-between; align-items: center;
+  cursor: pointer; transition: all 0.2s; gap: 16px;
+}
+.delivery-opt:hover { border-color: var(--gold); }
+.delivery-opt.active { border-color: var(--red); background: var(--red-soft); }
+.delivery-opt .del-name { font-weight: 600; font-size: 14px; margin-bottom: 2px; }
+.delivery-opt .del-desc { font-size: 12px; color: var(--ink-muted); }
+.delivery-opt .del-price { font-family: var(--serif); font-weight: 700; color: var(--red); white-space: nowrap; }
+.detail-total {
+  display: flex; justify-content: space-between; align-items: center;
+  padding: 20px 0; margin: 24px 0; border-top: 1px solid var(--line);
+  border-bottom: 1px solid var(--line);
+}
+.detail-total .total-label { font-size: 13px; color: var(--ink-soft); text-transform: uppercase; letter-spacing: 1px; font-weight: 600; }
+.detail-total .total-value { font-family: var(--serif); font-size: 28px; font-weight: 700; color: var(--ink); }
+.btn-add-cart {
+  width: 100%; padding: 18px; background: var(--red); color: var(--white);
+  font-size: 13px; font-weight: 600; letter-spacing: 3px;
+  transition: all 0.25s; margin-bottom: 12px; text-transform: uppercase;
+}
+.btn-add-cart:hover { background: var(--red-deep); }
+.btn-waitlist {
+  width: 100%; padding: 18px; border: 1px solid var(--red);
+  color: var(--red); font-size: 13px; font-weight: 600;
+  letter-spacing: 2px; transition: all 0.25s; text-transform: uppercase;
+}
+.btn-waitlist:hover { background: var(--red); color: var(--white); }
+
+/* NFT Box */
+.nft-box {
+  margin-top: 28px; padding: 24px; background: linear-gradient(135deg, var(--gold-soft), var(--ivory));
+  border: 1px solid var(--line-gold); position: relative; overflow: hidden;
+}
+.nft-box::before {
+  content: '1/1'; position: absolute; top: -10px; right: 16px;
+  font-family: var(--serif); font-size: 64px; font-weight: 700;
+  color: var(--gold); opacity: 0.15; font-style: italic;
+}
+.nft-box h4 {
+  font-family: var(--serif); font-size: 17px; font-weight: 600;
+  margin-bottom: 10px; display: flex; align-items: center; gap: 10px; font-style: italic;
+}
+.nft-box h4 .nft-tag {
+  font-size: 9px; background: var(--gold); color: var(--white);
+  padding: 3px 8px; letter-spacing: 1.5px; font-family: var(--sans); font-style: normal;
+}
+.nft-box p { font-size: 13px; color: var(--ink-soft); line-height: 1.8; margin-bottom: 10px; font-weight: 300; }
+.nft-box .nft-meta { display: flex; gap: 20px; font-size: 11px; color: var(--ink-muted); }
+.nft-box .nft-meta span { display: flex; align-items: center; gap: 5px; }
+.nft-box .nft-meta span::before { content: ''; width: 5px; height: 5px; background: var(--gold); border-radius: 50%; }
+
+/* Certificate Box */
+.certificate-box {
+  margin-top: 24px; padding: 24px; background: var(--ivory);
+  border: 1px solid var(--line-gold);
+}
+.certificate-box h4 {
+  font-family: var(--serif); font-size: 16px; font-weight: 600;
+  margin-bottom: 12px; display: flex; align-items: center; gap: 10px; font-style: italic;
+}
+.certificate-box h4::before {
+  content: 'CERT'; background: var(--red); color: var(--white);
+  display: inline-flex; align-items: center; justify-content: center;
+  font-size: 9px; padding: 3px 8px; letter-spacing: 1px;
+  font-family: var(--sans); font-style: normal; font-weight: 700;
+}
+.certificate-box ul { list-style: none; }
+.certificate-box li {
+  font-size: 13px; color: var(--ink-soft); padding: 5px 0;
+  padding-left: 16px; position: relative; line-height: 1.7;
+}
+.certificate-box li::before { content: ''; position: absolute; left: 0; top: 13px; width: 6px; height: 1px; background: var(--gold); }
+.detail-desc { margin-top: 40px; }
+.detail-desc h3 {
+  font-family: var(--serif); font-size: 20px; font-weight: 600;
+  margin-bottom: 16px; padding-bottom: 12px; border-bottom: 1px solid var(--line); font-style: italic;
+}
+.detail-desc p { font-size: 14px; color: var(--ink-soft); line-height: 2; margin-bottom: 16px; font-weight: 300; }
+
+/* ===== Artist Page ===== */
+.artist-hero {
+  background: var(--ink); color: var(--white); padding: 80px 0;
+  position: relative; overflow: hidden;
+}
+.artist-hero::after {
+  content: ''; position: absolute; right: -120px; top: -120px;
+  width: 440px; height: 440px; border: 1px solid rgba(201,169,110,0.12);
+  border-radius: 50%;
+}
+.artist-hero-inner { max-width: 1320px; margin: 0 auto; padding: 0 32px; position: relative; z-index: 1; }
+.artist-hero h2 { font-family: var(--serif); font-size: 44px; font-weight: 600; letter-spacing: 0.5px; margin-bottom: 16px; font-style: italic; }
+.artist-hero p { font-size: 16px; color: rgba(255,255,255,0.7); max-width: 620px; line-height: 2; font-weight: 300; }
+.benefits-grid {
+  display: grid; grid-template-columns: repeat(auto-fit, minmax(260px, 1fr));
+  gap: 24px; margin: 64px 0;
+}
+.benefit-card {
+  padding: 32px; background: var(--white); border: 1px solid var(--line);
+  transition: all 0.3s;
+}
+.benefit-card:hover { border-color: var(--line-red); box-shadow: var(--shadow); }
+.benefit-num {
+  font-family: var(--serif); font-size: 36px; font-weight: 700;
+  color: var(--red); opacity: 0.35; line-height: 1; margin-bottom: 16px; font-style: italic;
+}
+.benefit-card h4 { font-family: var(--serif); font-size: 19px; font-weight: 600; margin-bottom: 10px; letter-spacing: 0.5px; font-style: italic; }
+.benefit-card p { font-size: 13px; color: var(--ink-muted); line-height: 1.8; font-weight: 300; }
+.artist-form-section { background: var(--ivory-deep); padding: 64px 0; }
+.form-layout { display: grid; grid-template-columns: 1fr 1fr; gap: 64px; align-items: start; }
+.form-info h3 { font-family: var(--serif); font-size: 28px; font-weight: 600; margin-bottom: 20px; letter-spacing: 0.5px; font-style: italic; }
+.form-info p { font-size: 14px; color: var(--ink-soft); line-height: 2; margin-bottom: 24px; font-weight: 300; }
+.form-info ul { list-style: none; }
+.form-info li {
+  font-size: 13px; color: var(--ink-soft); padding: 8px 0;
+  padding-left: 24px; position: relative;
+}
+.form-info li::before {
+  content: ''; position: absolute; left: 0; top: 14px;
+  width: 8px; height: 8px; border-right: 2px solid var(--red);
+  border-bottom: 2px solid var(--red); transform: rotate(45deg);
+}
+.apply-form { background: var(--white); padding: 36px; border: 1px solid var(--line); }
+.form-group { margin-bottom: 20px; }
+.form-group label {
+  display: block; font-size: 12px; font-weight: 600; color: var(--ink-soft);
+  margin-bottom: 8px; text-transform: uppercase; letter-spacing: 1px;
+}
+.form-group input, .form-group textarea, .form-group select {
+  width: 100%; padding: 12px 16px; border: 1px solid var(--line);
+  font-size: 14px; font-family: inherit; background: var(--ivory);
+  transition: border-color 0.2s;
+}
+.form-group input:focus, .form-group textarea:focus { outline: none; border-color: var(--red); }
+.form-group textarea { resize: vertical; min-height: 100px; }
+.form-row { display: grid; grid-template-columns: 1fr 1fr; gap: 16px; }
+.btn-submit {
+  width: 100%; padding: 16px; background: var(--red); color: var(--white);
+  font-size: 13px; font-weight: 600; letter-spacing: 3px;
+  transition: all 0.25s; margin-top: 8px; text-transform: uppercase;
+}
+.btn-submit:hover { background: var(--red-deep); }
+.form-success { display: none; text-align: center; padding: 40px 20px; }
+.form-success.show { display: block; }
+.form-success .check-icon {
+  width: 64px; height: 64px; border: 2px solid var(--red);
+  border-radius: 50%; display: flex; align-items: center; justify-content: center;
+  margin: 0 auto 20px; position: relative;
+}
+.form-success .check-icon::after {
+  content: ''; width: 16px; height: 28px;
+  border-right: 3px solid var(--red); border-bottom: 3px solid var(--red);
+  transform: rotate(45deg) translate(-2px, -4px);
+}
+.form-success h4 { font-family: var(--serif); font-size: 22px; margin-bottom: 8px; font-style: italic; }
+.form-success p { font-size: 14px; color: var(--ink-muted); }
+
+/* ===== Exhibition Page ===== */
+.exhibition-hero { padding: 64px 0 48px; }
+.exhibition-hero h2 { font-family: var(--serif); font-size: 40px; font-weight: 600; letter-spacing: 0.5px; margin-bottom: 12px; font-style: italic; }
+.exhibition-hero p { font-size: 15px; color: var(--ink-muted); max-width: 580px; font-weight: 300; }
+.exhibition-tabs { display: flex; gap: 0; border-bottom: 1px solid var(--line); margin-bottom: 40px; }
+.ex-tab {
+  padding: 14px 28px; font-size: 13px; font-weight: 500;
+  color: var(--ink-muted); border-bottom: 2px solid transparent;
+  transition: all 0.2s; cursor: pointer; text-transform: uppercase; letter-spacing: 1px;
+}
+.ex-tab:hover { color: var(--ink-soft); }
+.ex-tab.active { color: var(--red); border-bottom-color: var(--red); font-weight: 600; }
+.exhibition-card {
+  display: grid; grid-template-columns: 320px 1fr; gap: 32px;
+  padding: 32px; background: var(--white); border: 1px solid var(--line);
+  margin-bottom: 24px; transition: all 0.3s;
+}
+.exhibition-card:hover { border-color: var(--line-red); box-shadow: var(--shadow); }
+.ex-img { aspect-ratio: 4/3; overflow: hidden; background: var(--ivory-deep); }
+.ex-img img { width: 100%; height: 100%; object-fit: cover; }
+.ex-content h4 { font-family: var(--serif); font-size: 22px; font-weight: 600; margin-bottom: 8px; letter-spacing: 0.5px; font-style: italic; }
+.ex-type-tag {
+  display: inline-block; padding: 3px 12px; font-size: 10px; font-weight: 600;
+  letter-spacing: 1.5px; text-transform: uppercase; margin-bottom: 10px;
+}
+.ex-type-theme { background: var(--red-soft); color: var(--red); }
+.ex-type-solo { background: var(--gold-soft); color: var(--gold-dark); }
+.ex-meta { display: flex; gap: 20px; margin-bottom: 14px; flex-wrap: wrap; }
+.ex-meta span { font-size: 12px; color: var(--ink-muted); display: flex; align-items: center; gap: 6px; }
+.ex-meta .ex-live { color: var(--red); font-weight: 600; }
+.ex-desc { font-size: 13px; color: var(--ink-soft); line-height: 1.9; margin-bottom: 16px; font-weight: 300; }
+.ex-works { display: flex; gap: 8px; flex-wrap: wrap; }
+.ex-work-tag {
+  padding: 4px 12px; background: var(--ivory); border: 1px solid var(--line);
+  font-size: 11px; color: var(--ink-muted); font-style: italic; font-family: var(--serif);
+}
+
+/* ===== About Page ===== */
+.about-hero { padding: 80px 0 60px; text-align: center; }
+.about-hero .fu-logo { justify-content: center; margin-bottom: 28px; }
+.about-hero .fu-logo .fu-mark { width: 56px; height: 56px; }
+.about-hero .fu-logo .fu-mark svg { width: 36px; height: 36px; }
+.about-hero h2 { font-family: var(--serif); font-size: 48px; font-weight: 600; letter-spacing: 2px; margin-bottom: 16px; font-style: italic; }
+.about-hero .slogan { font-size: 14px; letter-spacing: 6px; color: var(--gold-dark); text-transform: uppercase; margin-bottom: 24px; font-weight: 500; }
+.about-hero .divider { width: 60px; height: 2px; background: var(--red); margin: 0 auto 24px; }
+.about-hero p { font-size: 16px; color: var(--ink-soft); max-width: 660px; margin: 0 auto; line-height: 2.2; font-weight: 300; }
+.founder-section { background: var(--white); padding: 72px 0; border-top: 1px solid var(--line); border-bottom: 1px solid var(--line); }
+.founder-layout { display: grid; grid-template-columns: 1fr 1.5fr; gap: 56px; align-items: center; }
+.founder-img {
+  aspect-ratio: 3/4; background: var(--ivory-deep); overflow: hidden;
+  border: 1px solid var(--line-gold);
+}
+.founder-img img { width: 100%; height: 100%; object-fit: cover; }
+.founder-info .founder-label { font-size: 11px; letter-spacing: 3px; color: var(--gold-dark); text-transform: uppercase; margin-bottom: 12px; font-weight: 600; }
+.founder-info h3 { font-family: var(--serif); font-size: 32px; font-weight: 600; margin-bottom: 8px; font-style: italic; }
+.founder-info .founder-title { font-size: 14px; color: var(--red); margin-bottom: 24px; font-weight: 500; }
+.founder-info p { font-size: 14px; color: var(--ink-soft); line-height: 2; margin-bottom: 16px; font-weight: 300; }
+.founder-quote {
+  margin-top: 24px; padding: 20px 24px; border-left: 3px solid var(--red);
+  background: var(--ivory); font-family: var(--serif); font-style: italic;
+  font-size: 17px; color: var(--ink-soft); line-height: 1.8;
+}
+.philosophy-grid { display: grid; grid-template-columns: repeat(3, 1fr); gap: 32px; margin: 64px 0; }
+.philosophy-item { text-align: center; padding: 40px 28px; border-top: 2px solid var(--red); }
+.philosophy-item .ph-icon { font-family: var(--serif); font-size: 42px; font-weight: 700; color: var(--red); opacity: 0.25; margin-bottom: 16px; font-style: italic; }
+.philosophy-item h4 { font-family: var(--serif); font-size: 20px; font-weight: 600; margin-bottom: 12px; letter-spacing: 0.5px; font-style: italic; }
+.philosophy-item p { font-size: 13px; color: var(--ink-muted); line-height: 1.9; font-weight: 300; }
+.stats-row {
+  display: grid; grid-template-columns: repeat(4, 1fr); gap: 24px;
+  padding: 48px 0; border-top: 1px solid var(--line);
+  border-bottom: 1px solid var(--line); margin: 48px 0;
+}
+.stat-item { text-align: center; }
+.stat-num { font-family: var(--serif); font-size: 42px; font-weight: 700; color: var(--red); line-height: 1; }
+.stat-label { font-size: 11px; color: var(--ink-muted); margin-top: 10px; letter-spacing: 1px; text-transform: uppercase; }
+
+/* ===== Footer ===== */
+.footer {
+  background: var(--ink); color: rgba(255,255,255,0.55);
+  padding: 56px 0 32px; margin-top: 0;
+}
+.footer-inner {
+  max-width: 1320px; margin: 0 auto; padding: 0 32px;
+  display: grid; grid-template-columns: 2fr 1fr 1fr 1fr; gap: 48px;
+}
+.footer-brand h3 { font-family: var(--serif); font-size: 22px; font-weight: 600; color: var(--white); letter-spacing: 2px; margin-bottom: 8px; font-style: italic; }
+.footer-brand .footer-tag { font-size: 10px; letter-spacing: 2.5px; color: var(--gold); text-transform: uppercase; margin-bottom: 16px; }
+.footer-brand p { font-size: 13px; line-height: 1.9; max-width: 280px; font-weight: 300; }
+.footer-col h5 { font-size: 12px; font-weight: 600; color: var(--white); margin-bottom: 16px; letter-spacing: 2px; text-transform: uppercase; }
+.footer-col a { display: block; font-size: 13px; padding: 5px 0; transition: color 0.2s; font-weight: 300; }
+.footer-col a:hover { color: var(--gold-light); }
+.footer-bottom {
+  max-width: 1320px; margin: 40px auto 0; padding: 24px 32px 0;
+  border-top: 1px solid rgba(255,255,255,0.08);
+  display: flex; justify-content: space-between; font-size: 12px;
+  flex-wrap: wrap; gap: 12px;
+}
+
+/* ===== Toast ===== */
+.toast {
+  position: fixed; bottom: 32px; left: 50%; transform: translateX(-50%) translateY(20px);
+  background: var(--ink); color: var(--white); padding: 14px 32px;
+  font-size: 14px; z-index: 1000; opacity: 0; transition: all 0.3s; pointer-events: none;
+}
+.toast.show { opacity: 1; transform: translateX(-50%) translateY(0); }
+
+/* ===== Responsive ===== */
+@media (max-width: 1024px) {
+  .cat-grid { grid-template-columns: repeat(2, 1fr); }
+  .dualuse-inner { grid-template-columns: 1fr; gap: 32px; }
+  .founder-layout { grid-template-columns: 1fr; gap: 32px; }
+}
+@media (max-width: 900px) {
+  .nav-links { display: none; }
+  .hamburger { display: flex; }
+  .nav-links.open {
+    display: flex; flex-direction: column; position: fixed;
+    top: 72px; left: 0; right: 0; background: var(--ivory);
+    padding: 24px 32px; gap: 20px; border-bottom: 1px solid var(--line); z-index: 99;
+  }
+  .detail-layout { grid-template-columns: 1fr; gap: 32px; }
+  .detail-gallery { position: static; }
+  .form-layout { grid-template-columns: 1fr; gap: 32px; }
+  .exhibition-card { grid-template-columns: 1fr; }
+  .philosophy-grid { grid-template-columns: 1fr; }
+  .stats-row { grid-template-columns: repeat(2, 1fr); gap: 32px; }
+  .footer-inner { grid-template-columns: 1fr 1fr; gap: 32px; }
+  .drop-inner { flex-direction: column; text-align: center; }
+  .hero h1 { font-size: 38px; }
+}
+@media (max-width: 600px) {
+  .container { padding: 0 20px; }
+  .nav-inner { padding: 0 20px; }
+  .product-grid { grid-template-columns: 1fr; gap: 24px; }
+  .form-row { grid-template-columns: 1fr; }
+  .stats-row { grid-template-columns: 1fr 1fr; }
+  .footer-inner { grid-template-columns: 1fr; }
+  .countdown-num { font-size: 28px; }
+  .drop-countdown { gap: 16px; }
+  .cat-grid { grid-template-columns: 1fr; }
+  .dualuse-icon { flex-direction: column; }
+}
+</style>
+</head>
+<body class="silk-bg">
+
+<!-- ===== Fu Pattern SVG (黻纹) ===== -->
+<svg width="0" height="0" style="position:absolute">
+  <symbol id="fu-pattern" viewBox="0 0 100 100">
+    <path d="M22 15 L48 15 L48 28 L32 28 L32 42 L48 42 L48 58 L32 58 L32 72 L48 72 L48 85 L22 85 Z" fill="currentColor"/>
+    <path d="M78 15 L52 15 L52 28 L68 28 L68 42 L52 42 L52 58 L68 58 L68 72 L52 72 L52 85 L78 85 Z" fill="currentColor"/>
+  </symbol>
+</svg>
+
+<!-- ===== Navigation ===== -->
+<nav class="nav">
+  <div class="nav-inner">
+    <a href="#home" class="fu-logo">
+      <span class="fu-mark"><svg><use href="#fu-pattern"/></svg></span>
+      <span class="fu-text">
+        <span class="brand">LYS</span>
+        <span class="tagline">Long You Silk · Art Redefine</span>
+      </span>
+    </a>
+    <div class="nav-links" id="navLinks">
+      <a href="#home" data-route="home">Home</a>
+      <a href="#shop" data-route="shop">Collection</a>
+      <a href="#exhibition" data-route="exhibition">Exhibitions</a>
+      <a href="#artists" data-route="artists">For Artists</a>
+      <a href="#about" data-route="about">About</a>
+    </div>
+    <button class="nav-cta" onclick="location.hash='#shop'">Shop Now</button>
+    <button class="hamburger" id="hamburger" onclick="toggleNav()"><span></span><span></span><span></span></button>
+  </div>
+</nav>
+
+<!-- ===== View: Home ===== -->
+<section class="view active" id="view-home">
+  <div class="hero">
+    <div class="hero-bg"><img src="https://aka.doubaocdn.com/s/FUbJfV0A2H" alt="Silk art"></div>
+    <div class="hero-overlay"></div>
+    <div class="hero-content">
+      <div class="hero-eyebrow">Macau · Limited Silk Art Collectibles</div>
+      <h1>Silk as Canvas.<br><em>Scarcity</em> as Promise.</h1>
+      <p class="hero-sub">Every collectible is printed on premium mulberry silk, released in strictly limited editions. Once sold out, never reprinted. Hang it on your wall — or dissolve the backing and wear it as silk. This is Eastern beauty, redefined for the world.</p>
+      <div class="hero-actions">
+        <button class="btn-primary" onclick="location.hash='#shop'">Explore Collection</button>
+        <button class="btn-ghost" onclick="location.hash='#about'">Our Story</button>
+      </div>
+    </div>
+  </div>
+
+  <!-- Dual-Use Banner -->
+  <div class="dualuse-banner">
+    <div class="dualuse-inner">
+      <div class="dualuse-icon">
+        <div class="di-box">
+          <div class="di-label">Mode 01</div>
+          <div class="di-title">Wall Art</div>
+        </div>
+        <div class="di-box">
+          <div class="di-label">Mode 02</div>
+          <div class="di-title">Silk Scarf</div>
+        </div>
+      </div>
+      <div class="dualuse-text">
+        <h3>One Piece. <span>Two Lives.</span></h3>
+        <p>Every LYS silk print is produced on a dissolvable paper backing. Keep it as-is and frame it as museum-grade wall art. Or rinse away the backing to reveal a pure silk scarf — ready to wear, gift, or pass down.</p>
+        <p class="dualuse-note">The 90×90 cm size matches the classic Hermès carré dimension. Dissolve, roll the edges, and you own a collector-grade silk scarf.</p>
+      </div>
+    </div>
+  </div>
+
+  <!-- Countdown -->
+  <div class="drop-banner">
+    <div class="drop-inner">
+      <div class="drop-info">
+        <h3>Autumn 2026 Limited Drop</h3>
+        <p>One drop every six months. This season: 10 works across 12 categories — 6 Collector's Editions, 3 Standard, 1 NFT 1/1.</p>
+      </div>
+      <div class="drop-countdown" id="countdown">
+        <div class="countdown-unit"><div class="countdown-num" id="cd-days">--</div><div class="countdown-label">Days</div></div>
+        <div class="countdown-unit"><div class="countdown-num" id="cd-hours">--</div><div class="countdown-label">Hours</div></div>
+        <div class="countdown-unit"><div class="countdown-num" id="cd-mins">--</div><div class="countdown-label">Mins</div></div>
+        <div class="countdown-unit"><div class="countdown-num" id="cd-secs">--</div><div class="countdown-label">Secs</div></div>
+      </div>
+    </div>
+  </div>
+
+  <!-- 12 Categories -->
+  <div class="section">
+    <div class="container">
+      <div class="section-head">
+        <div>
+          <div class="section-title">Twelve Universes</div>
+          <div class="section-sub">From global pop culture to Eastern heritage — twelve categories, one silk medium.</div>
+        </div>
+        <a href="#shop" class="section-link">Browse All →</a>
+      </div>
+      <div id="home-categories"></div>
+    </div>
+  </div>
+
+  <!-- Featured -->
+  <div class="section" style="background: var(--white);">
+    <div class="container">
+      <div class="section-head">
+        <div>
+          <div class="section-title">Featured This Season</div>
+          <div class="section-sub">Autumn 2026 drop. Limited works. While they last.</div>
+        </div>
+        <a href="#shop" class="section-link">View All Works →</a>
+      </div>
+      <div class="product-grid" id="home-products"></div>
+    </div>
+  </div>
+
+  <!-- Why Silk -->
+  <div class="section">
+    <div class="container">
+      <div class="section-head">
+        <div>
+          <div class="section-title">The LYS Standard</div>
+          <div class="section-sub">Not paper. Not metal. Five thousand years of silk craft, reimagined for global collectors.</div>
+        </div>
+      </div>
+      <div class="philosophy-grid">
+        <div class="philosophy-item">
+          <div class="ph-icon">I</div>
+          <h4>Silk Medium</h4>
+          <p>Premium mulberry silk, micro-jet printed to reproduce every detail. The natural sheen shifts with light — a texture no paper or metal can match. Dissolvable backing enables dual-use as wall art or wearable silk.</p>
+        </div>
+        <div class="philosophy-item">
+          <div class="ph-icon">II</div>
+          <h4>Strictly Limited</h4>
+          <p>Collector's Editions: 25–100 pieces, hand-embroidered numbering on reverse, certificate of authenticity. Sold out means gone forever — no reprints, no matter the demand. One NFT 1/1 per drop, auctioned separately.</p>
+        </div>
+        <div class="philosophy-item">
+          <div class="ph-icon">III</div>
+          <h4>Global Stage</h4>
+          <p>Works enter physical exhibitions in Macau, Beijing, Taipei, Paris and beyond. Theme exhibitions tied to our 12 categories, plus solo shows for headlining artists. We are a bridge — Eastern silk art to the world.</p>
+        </div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- ===== View: Shop ===== -->
+<section class="view" id="view-shop">
+  <div class="container">
+    <div class="shop-header">
+      <div class="section-title">The Collection</div>
+      <div class="section-sub">One drop every six months. Sold out = retired forever.</div>
+    </div>
+    <div class="shop-filters" id="shop-filters">
+      <button class="filter-btn active" data-filter="all">All</button>
+      <button class="filter-btn" data-filter="collector">Collector's Edition</button>
+      <button class="filter-btn" data-filter="standard">Standard Edition</button>
+      <button class="filter-btn" data-filter="nft">NFT 1/1</button>
+      <button class="filter-btn" data-filter="available">Available</button>
+      <button class="filter-btn" data-filter="soldout">Sold Out</button>
+    </div>
+    <div class="shop-cat-row" id="shop-cats"></div>
+    <div class="product-grid" id="shop-products"></div>
+  </div>
+</section>
+
+<!-- ===== View: Product Detail ===== -->
+<section class="view" id="view-product">
+  <div class="container">
+    <div class="product-detail" id="product-detail-content"></div>
+  </div>
+</section>
+
+<!-- ===== View: Exhibition ===== -->
+<section class="view" id="view-exhibition">
+  <div class="container">
+    <div class="exhibition-hero">
+      <h2>Global Exhibitions</h2>
+      <p>LYS works exist beyond the online store — they travel to exhibition spaces worldwide. Two tracks: themed exhibitions tied to our 12 categories, and solo shows for headlining artists and legends.</p>
+    </div>
+    <div class="exhibition-tabs" id="ex-tabs">
+      <div class="ex-tab active" data-tab="current">Now Showing</div>
+      <div class="ex-tab" data-tab="upcoming">Upcoming</div>
+      <div class="ex-tab" data-tab="past">Archive</div>
+    </div>
+    <div id="exhibition-list"></div>
+  </div>
+</section>
+
+<!-- ===== View: Artists ===== -->
+<section class="view" id="view-artists">
+  <div class="artist-hero">
+    <div class="artist-hero-inner">
+      <h2>For Artists Worldwide</h2>
+      <p>We seek creators with real conviction — from East and West. Your work will be printed on premium silk, released to collectors worldwide, and given the chance to enter museum-grade exhibitions. You retain full copyright. We handle the rest.</p>
+    </div>
+  </div>
+  <div class="container">
+    <div class="benefits-grid">
+      <div class="benefit-card">
+        <div class="benefit-num">01</div>
+        <h4>Revenue Share</h4>
+        <p>Standard Editions: 25–30% of sales revenue. Collector's Editions: 35–40%. NFT 1/1 auctions: 8–10% royalty, split artist/platform. We cover silk material, printing, logistics, and customer service.</p>
+      </div>
+      <div class="benefit-card">
+        <div class="benefit-num">02</div>
+        <h4>Exhibition Exposure</h4>
+        <p>Outstanding works are prioritized for physical exhibitions in Macau, Beijing, Taipei, Paris and beyond. Theme shows tied to our 12 categories, plus potential solo exhibitions. This is a stage for museum-grade audiences.</p>
+      </div>
+      <div class="benefit-card">
+        <div class="benefit-num">03</div>
+        <h4>Collectible Value</h4>
+        <p>Every work is strictly limited — 25–500 pieces, numbered and certified. Sold out and retired. Your work carries long-term appreciation potential in the secondary market, with NFT royalty for the 1/1 edition.</p>
+      </div>
+      <div class="benefit-card">
+        <div class="benefit-num">04</div>
+        <h4>Creative Freedom</h4>
+        <p>3-year exclusive license for silk print sales and exhibition usage. You retain full copyright of your work. No open registration — every artist goes through portfolio review to protect collection quality.</p>
+      </div>
+    </div>
+  </div>
+  <div class="artist-form-section">
+    <div class="container">
+      <div class="form-layout">
+        <div class="form-info">
+          <h3>Apply to Join</h3>
+          <p>We do not allow open registration. Every artist must go through a portfolio review to ensure the overall artistic quality of our collection. We welcome artists from all backgrounds — East and West, established and emerging.</p>
+          <ul>
+            <li>Submit your portfolio and artist statement</li>
+            <li>Our editorial team responds within 7 business days</li>
+            <li>Sign the collaboration agreement upon approval</li>
+            <li>Your work enters the next season's drop schedule</li>
+            <li>Revenue share settled monthly, refunds deducted</li>
+          </ul>
+        </div>
+        <div class="apply-form" id="apply-form-wrap">
+          <form id="apply-form" onsubmit="submitForm(event)">
+            <div class="form-row">
+              <div class="form-group">
+                <label>Full Name / Artist Name</label>
+                <input type="text" required placeholder="Your name">
+              </div>
+              <div class="form-group">
+                <label>Email</label>
+                <input type="email" required placeholder="you@email.com">
+              </div>
+            </div>
+            <div class="form-row">
+              <div class="form-group">
+                <label>Country / Region</label>
+                <input type="text" placeholder="Where are you based?">
+              </div>
+              <div class="form-group">
+                <label>Primary Medium</label>
+                <select required>
+                  <option value="">Select one</option>
+                  <option>Illustration / Digital Art</option>
+                  <option>Chinese Ink / Wash Painting</option>
+                  <option>Contemporary / Abstract</option>
+                  <option>Calligraphy</option>
+                  <option>Photography</option>
+                  <option>Graphic Design / Poster Art</option>
+                  <option>Other</option>
+                </select>
+              </div>
+            </div>
+            <div class="form-group">
+              <label>Portfolio Link</label>
+              <input type="url" placeholder="Personal site / Behance / Instagram">
+            </div>
+            <div class="form-group">
+              <label>Artist Statement</label>
+              <textarea placeholder="Briefly describe your creative philosophy, style, and representative works..." required></textarea>
+            </div>
+            <button type="submit" class="btn-submit">Submit Application</button>
+          </form>
+          <div class="form-success" id="form-success">
+            <div class="check-icon"></div>
+            <h4>Application Received</h4>
+            <p>Thank you. Our editorial team will review your portfolio and respond within 7 business days.</p>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- ===== View: About ===== -->
+<section class="view" id="view-about">
+  <div class="about-hero">
+    <div class="container">
+      <div class="fu-logo">
+        <span class="fu-mark"><svg><use href="#fu-pattern"/></svg></span>
+      </div>
+      <h2>LYS</h2>
+      <div class="slogan">Long You Silk · Art Redefine</div>
+      <div class="divider"></div>
+      <p>LYS is the world's premier limited-edition silk art platform. Based in Macau — where East meets West — we transform extraordinary art into collectible silk prints, released in strictly limited editions. Every piece can hang on a wall or be worn as silk. We are not a marketplace. We are a cultural bridge.</p>
+    </div>
+  </div>
+
+  <div class="founder-section">
+    <div class="container">
+      <div class="founder-layout">
+        <div class="founder-img">
+          <img src="https://aka.doubaocdn.com/s/pVo9KyFCqk" alt="Founder">
+        </div>
+        <div class="founder-info">
+          <div class="founder-label">Founder & Creative Director</div>
+          <h3>Sean Own</h3>
+          <div class="founder-title">E-commerce Merchandiser · Cultural Entrepreneur</div>
+          <p>Sean Own is not a fashion designer — he is a merchandiser. For over a decade, he has specialized in taking cultural products and turning them into commercially successful goods, serving over 80 companies and generating over 100 million RMB in revenue through live commerce and e-commerce.</p>
+          <p>As founder of Long You Group, president of the Guangdong-Hong Kong-Macao Greater Bay Area Electronics Chamber of Commerce, and director of the Macau Long You Silk Culture and Art Center, Sean has long focused on two missions: AI industry implementation, and the international传播 of Chinese culture.</p>
+          <p>Featured on CGTN French channel's "Taiwanese in Macau" series, Sean shared his vision of building cultural bridges — bringing the excellence of Chinese culture to the world through Macau's unique position as a East-West cultural crossroads.</p>
+          <div class="founder-quote">"We don't just sell silk art. We redefine how the world experiences Eastern beauty — one limited edition at a time."</div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <div class="section">
+    <div class="container">
+      <div class="section-head">
+        <div>
+          <div class="section-title">Our Philosophy</div>
+          <div class="section-sub">Three principles that guide everything we do.</div>
+        </div>
+      </div>
+      <div class="philosophy-grid">
+        <div class="philosophy-item">
+          <div class="ph-icon">道</div>
+          <h4>Wealth from Principle</h4>
+          <p>"财自道生，利缘义取" — wealth is born from principle, profit is gained through righteousness. We do not chase volume. We chase quality, authenticity, and long-term trust with collectors and artists alike.</p>
+        </div>
+        <div class="philosophy-item">
+          <div class="ph-icon">融</div>
+          <h4>East Meets West</h4>
+          <p>Based in Macau, we stand at the intersection of Eastern heritage and Western contemporary art. Our 12 categories span both worlds — and we actively invite Western artists to redefine Eastern aesthetics alongside us.</p>
+        </div>
+        <div class="philosophy-item">
+          <div class="ph-icon">藏</div>
+          <h4>Built to Last</h4>
+          <p>Every LYS piece is built to be passed down. Strictly limited editions, never reprinted. Physical anti-counterfeiting technology. A future authentication center. We create collectibles that appreciate, not depreciate.</p>
+        </div>
+      </div>
+      <div class="stats-row">
+        <div class="stat-item"><div class="stat-num">12</div><div class="stat-label">Art Categories</div></div>
+        <div class="stat-item"><div class="stat-num">2</div><div class="stat-label">Drops Per Year</div></div>
+        <div class="stat-item"><div class="stat-num">25–500</div><div class="stat-label">Pieces Per Edition</div></div>
+        <div class="stat-item"><div class="stat-num">1/1</div><div class="stat-label">NFT Per Drop</div></div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- ===== Footer ===== -->
+<footer class="footer">
+  <div class="footer-inner">
+    <div class="footer-brand">
+      <h3>LYS</h3>
+      <div class="footer-tag">Long You Silk · Art Redefine</div>
+      <p>The world's premier limited-edition silk art platform. Based in Macau. Built for global collectors.</p>
+    </div>
+    <div class="footer-col">
+      <h5>Collection</h5>
+      <a href="#shop" onclick="setFilter('all')">All Works</a>
+      <a href="#shop" onclick="setFilter('collector')">Collector's Edition</a>
+      <a href="#shop" onclick="setFilter('standard')">Standard Edition</a>
+      <a href="#shop" onclick="setFilter('nft')">NFT 1/1</a>
+    </div>
+    <div class="footer-col">
+      <h5>Platform</h5>
+      <a href="#exhibition">Exhibitions</a>
+      <a href="#artists">For Artists</a>
+      <a href="#about">About Us</a>
+      <a href="#about">Authentication</a>
+    </div>
+    <div class="footer-col">
+      <h5>Contact</h5>
+      <a href="#">hello@longyousilk.com</a>
+      <a href="#">Macau, China</a>
+      <a href="#">Instagram</a>
+      <a href="#">WeChat</a>
+    </div>
+  </div>
+  <div class="footer-bottom">
+    <span>© 2026 LYS · Long You Silk. All rights reserved.</span>
+    <span>Art Redefine · Macau</span>
+  </div>
+</footer>
+
+<!-- ===== Toast ===== -->
+<div class="toast" id="toast"></div>
+
+<script>
+// ===== Data: 12 Categories =====
+const categories = [
+  { id: 'cinema', num: '01', name: 'Cinema Collection', nameZh: '光影收藏', group: 'Universe', desc: 'Iconic film moments and original movie poster art, reimagined on silk. One Sheet size matches the theatrical standard.' },
+  { id: 'anime', num: '02', name: 'Anime Universe', nameZh: '动漫宇宙', group: 'Universe', desc: 'Anime and manga-inspired art, from classic cel-shading to contemporary digital illustration.' },
+  { id: 'legends', num: '03', name: 'Legends Gallery', nameZh: '名人殿堂', group: 'Universe', desc: 'Iconic figures — musicians, athletes, actors, thinkers — co-created with visual artists. Not photos, but artistic interpretations.' },
+  { id: 'sonic', num: '04', name: 'Sonic Echoes', nameZh: '音乐回声', group: 'Universe', desc: 'Album art, band posters, and music-inspired visual art. The visual language of sound, on silk.' },
+  { id: 'palace', num: '05', name: 'Palace Reimagined', nameZh: '故宫新生', group: 'Eastern', desc: 'Forbidden City motifs, imperial patterns, and museum artifacts — reimagined by contemporary artists. Beijing, Taipei, and beyond.' },
+  { id: 'dunhuang', num: '06', name: 'Dunhuang Reimagined', nameZh: '敦煌新生', group: 'Eastern', desc: 'Dunhuang frescoes, flying apsaras, and Silk Road heritage — brought to life on the very material that once traveled the route.' },
+  { id: 'nantian', num: '07', name: 'Nantian Gate', nameZh: '南天门', group: 'Eastern', desc: 'Deities, immortals, and mythological figures from Chinese folklore. Character-driven, powerful, and contemporary.' },
+  { id: 'mood', num: '08', name: 'Eastern Mood', nameZh: '东方意境', group: 'Eastern', desc: 'Abstract Eastern aesthetics — negative space, ink washes, floral stillness. Mood over narrative, feeling over form.' },
+  { id: 'cyber', num: '09', name: 'Cyber Orient', nameZh: '赛博东方', group: 'Western', desc: 'Neon-lit futurism fused with Eastern iconography. Cyberpunk cities, techno-geishas, and digital dynasty aesthetics.' },
+  { id: 'street', num: '10', name: 'Eastern Street', nameZh: '东方街头', group: 'Western', desc: 'Graffiti, street art, and urban culture with Eastern roots. Where the gallery meets the alleyway.' },
+  { id: 'gaze', num: '11', name: 'The Other Gaze', nameZh: '他者之眼', group: 'Western', desc: 'Non-Eastern artists interpreting Eastern themes. A dedicated category for Western creators to redefine Oriental aesthetics.' },
+  { id: 'scifi', num: '12', name: 'Eastern Sci-Fi', nameZh: '东方科幻', group: 'Western', desc: 'Science fiction through an Eastern lens — mythical beasts reimagined as mecha, ancient futures, and cosmic mythology.' },
+];
+
+// ===== Data: Products =====
+const products = [
+  { id: 1, name: 'Neon Kowloon', artist: 'K. Tanaka', category: 'cyber', edition: 'collector', price: 1480, total: 75, sold: 62, image: 'https://aka.doubaocdn.com/s/x7UB8RZ6az', desc: 'A cyberpunk vision of Kowloon Walled City — neon signs, rain-slicked streets, and Eastern architecture fused with futuristic tech. Part of the Cyber Orient collection.' },
+  { id: 2, name: 'Flying Apsara', artist: 'Lin Wei', category: 'dunhuang', edition: 'collector', price: 1680, total: 50, sold: 50, image: 'https://aka.doubaocdn.com/s/w7SRyidIVg', desc: 'Dunhuang flying apsara reimagined in contemporary line work. The silk medium itself echoes the Silk Road that once carried these images westward.' },
+  { id: 3, name: 'The Last Emperor', artist: 'M. Dubois', category: 'gaze', edition: 'standard', price: 890, total: 500, sold: 234, image: 'https://aka.doubaocdn.com/s/G3UIMsWcsJ', desc: 'A French artist\'s interpretation of Puyi, the last emperor of China. Part of The Other Gaze — dedicated to non-Eastern artists redefining Oriental themes.' },
+  { id: 4, name: 'Dragon Mecha', artist: 'Studio Kaiju', category: 'scifi', edition: 'collector', price: 1580, total: 100, sold: 87, image: 'https://aka.doubaocdn.com/s/iNlHfHlCh0', desc: 'The Chinese dragon reimagined as a biomechanical mecha. Ancient mythology meets futuristic engineering in the Eastern Sci-Fi collection.' },
+  { id: 5, name: 'Bruce Lee — The Flow', artist: 'A. Rivera × LYS', category: 'legends', edition: 'collector', price: 1880, total: 100, sold: 100, image: 'https://aka.doubaocdn.com/s/8W16b5UFwh', desc: 'Bruce Lee captured in mid-flow — not a photograph, but an artistic co-creation between illustrator A. Rivera and the LYS studio. Legends Gallery celebrates iconic figures through artistic interpretation.' },
+  { id: 6, name: 'Midnight Jazz', artist: 'S. Okafor', category: 'sonic', edition: 'standard', price: 890, total: 500, sold: 156, image: 'https://aka.doubaocdn.com/s/KXWfo3OetS', desc: 'The visual language of jazz — smoky clubs, brass curves, and midnight rhythms — translated into silk. Sonic Echoes explores where sound becomes image.' },
+  { id: 7, name: 'Palace Geometry', artist: 'Wang Yue', category: 'palace', edition: 'collector', price: 1380, total: 75, sold: 41, image: 'https://aka.doubaocdn.com/s/psPfVHqgB', desc: 'Forbidden City architectural patterns deconstructed into contemporary geometry. Palace Reimagined brings imperial heritage into the 21st century.' },
+  { id: 8, name: 'Erlang Shen', artist: 'Chen Hao', category: 'nantian', edition: 'collector', price: 1580, total: 50, sold: 33, image: 'https://aka.doubaocdn.com/s/FUbJfV0A2H', desc: 'Erlang Shen, the three-eyed deity of Chinese mythology, rendered in bold contemporary style. Nantian Gate is our character-driven mythology collection.' },
+  { id: 9, name: 'Ink Bloom', artist: 'Yuki Sato', category: 'mood', edition: 'standard', price: 790, total: 500, sold: 289, image: 'https://aka.doubaocdn.com/s/G3UIMsWcsJ', desc: 'A single plum blossom dissolving into ink wash. Eastern Mood is about negative space, stillness, and the feeling between brushstrokes.' },
+  { id: 10, name: 'Wall Dragon', artist: 'R. Mendez', category: 'street', edition: 'standard', price: 890, total: 500, sold: 178, image: 'https://aka.doubaocdn.com/s/x7UB8RZ6az', desc: 'A dragon mural found on a Shanghai back alley, photographed and re-rendered for silk. Eastern Street brings urban art into the gallery.' },
+  { id: 11, name: 'Akira Requiem', artist: 'H. Yamamoto', category: 'anime', edition: 'collector', price: 1680, total: 100, sold: 100, image: 'https://aka.doubaocdn.com/s/w7SRyidIVg', desc: 'A tribute to anime\'s most iconic cyberpunk moments. Anime Universe celebrates the visual language of Japanese animation, from cel-shading to modern digital.' },
+  { id: 12, name: 'The Godfather — Silk Cut', artist: 'LYS Studio × NFT', category: 'cinema', edition: 'nft', price: 8800, total: 1, sold: 0, image: 'https://aka.doubaocdn.com/s/iNlHfHlCh0', desc: 'The 1/1 NFT edition of this season\'s Cinema Collection centerpiece. An original interpretation of The Godfather\'s iconic silhouette, on silk, with blockchain-verified provenance. Auctioned separately to the highest bidder.' },
+];
+
+// ===== Data: Sizes =====
+const sizes = [
+  { id: 'a2', name: 'A2', dim: '42 × 59.4 cm', priceAdd: 0 },
+  { id: '90x90', name: '90 × 90', dim: '90 × 90 cm · Scarf Size', priceAdd: 200 },
+  { id: 'onesheet', name: 'One Sheet', dim: '27 × 40 in · Cinema Standard', priceAdd: 400 },
+];
+
+// ===== Data: Delivery =====
+const deliveries = [
+  { id: 'print', name: 'Silk Print Only', desc: 'Unframed silk print, rolled in protective tube. Dissolvable backing intact.', price: 0 },
+  { id: 'mounted', name: 'Pre-Mounted Panel', desc: 'Silk print mounted on archival board, ready to frame. Museum-grade materials.', price: 220 },
+];
+
+// ===== Data: Exhibitions =====
+const exhibitions = [
+  { id: 1, title: 'Cyber Orient — Neon Futures', type: 'theme', typeLabel: 'Theme Exhibition', status: 'current', location: 'Macau Art Center', date: 'Sep 15 – Nov 30, 2026', works: ['Neon Kowloon', 'Dragon Mecha', 'Wall Dragon'], desc: 'A deep dive into the Cyber Orient category — where Eastern iconography meets neon-lit futurism. Featuring 12 works from 8 international artists.', image: 'https://aka.doubaocdn.com/s/x7UB8RZ6az' },
+  { id: 2, title: 'Sean Own — Silk & Vision', type: 'solo', typeLabel: 'Solo Exhibition', status: 'current', location: 'Long You Silk Culture Center, Macau', date: 'Oct 1 – Dec 15, 2026', works: ['Palace Geometry', 'Ink Bloom', 'Flying Apsara'], desc: 'A solo exhibition showcasing founder Sean Own\'s curatorial vision — from his early merchandising work to the LYS silk art platform. Featured on CGTN French channel.', image: 'https://aka.doubaocdn.com/s/pVo9KyFCqk' },
+  { id: 3, title: 'Dunhuang — Silk Road Reimagined', type: 'theme', typeLabel: 'Theme Exhibition', status: 'upcoming', location: 'Beijing + Paris (Touring)', date: 'Spring 2027', works: ['Flying Apsara', 'Palace Geometry'], desc: 'A touring exhibition celebrating Dunhuang frescoes and Silk Road heritage, printed on the very material that once traveled the route. Beijing premiere, then Paris.', image: 'https://aka.doubaocdn.com/s/w7SRyidIVg' },
+  { id: 4, title: 'Legends Gallery — Icons Reimagined', type: 'theme', typeLabel: 'Theme Exhibition', status: 'upcoming', location: 'Taipei', date: 'Summer 2027', works: ['Bruce Lee — The Flow'], desc: 'Our Legends Gallery category comes to life — iconic figures from music, sports, film, and philosophy, reimagined by visual artists. Not photographs. Artistic interpretations.', image: 'https://aka.doubaocdn.com/s/8W16b5UFwh' },
+  { id: 5, title: 'The Other Gaze — Western Artists, Eastern Themes', type: 'theme', typeLabel: 'Theme Exhibition', status: 'past', location: 'Macau', date: 'Spring 2026', works: ['The Last Emperor'], desc: 'Our inaugural exhibition dedicated to non-Eastern artists interpreting Eastern themes. A bold experiment in cross-cultural artistic dialogue.', image: 'https://aka.doubaocdn.com/s/G3UIMsWcsJ' },
+];
+
+// ===== State =====
+let currentFilter = 'all';
+let currentCat = 'all';
+let currentProduct = null;
+let selectedSize = 'a2';
+let selectedDelivery = 'print';
+
+// ===== Render: Categories =====
+function renderCategories(container) {
+  const groups = ['Universe', 'Eastern', 'Western'];
+  let html = '';
+  groups.forEach(group => {
+    const cats = categories.filter(c => c.group === group);
+    html += `<div class="cat-groups"><div class="cat-group-label">${group}</div><div class="cat-grid">`;
+    cats.forEach(cat => {
+      html += `<div class="cat-card" onclick="filterByCat('${cat.id}')">
+        <div class="cat-num">${cat.num}</div>
+        <div class="cat-name">${cat.name}</div>
+        <div class="cat-name-zh">${cat.nameZh}</div>
+        <div class="cat-desc">${cat.desc}</div>
+      </div>`;
+    });
+    html += `</div></div>`;
+  });
+  document.getElementById(container).innerHTML = html;
+}
+
+// ===== Render: Shop Category Chips =====
+function renderShopCats() {
+  let html = `<button class="cat-chip ${currentCat==='all'?'active':''}" onclick="filterByCat('all')">All Categories</button>`;
+  categories.forEach(cat => {
+    html += `<button class="cat-chip ${currentCat===cat.id?'active':''}" onclick="filterByCat('${cat.id}')">${cat.nameZh} · ${cat.name}</button>`;
+  });
+  document.getElementById('shop-cats').innerHTML = html;
+}
+
+// ===== Render: Product Card =====
+function productCard(p) {
+  const cat = categories.find(c => c.id === p.category);
+  const soldOut = p.sold >= p.total;
+  const badgeClass = p.edition === 'nft' ? 'badge-nft' : p.edition === 'collector' ? 'badge-collector' : 'badge-standard';
+  const badgeText = p.edition === 'nft' ? 'NFT 1/1' : p.edition === 'collector' ? "Collector's" : 'Standard';
+  return `<div class="product-card" onclick="openProduct(${p.id})">
+    <div class="product-img-wrap">
+      <span class="product-badge ${badgeClass}">${badgeText}</span>
+      <span class="product-cat-tag">${cat.nameZh}</span>
+      ${soldOut ? '<div class="product-soldout-overlay"></div><span class="badge-soldout">Sold Out</span>' : ''}
+      <img src="${p.image}" alt="${p.name}">
+    </div>
+    <div class="product-info">
+      <div class="product-name">${p.name}</div>
+      <div class="product-artist">by ${p.artist}</div>
+      <div class="product-meta">
+        <span class="product-edition">Ed. ${p.total} · ${p.sold}/${p.total}</span>
+        <span class="product-price">$${p.price}</span>
+      </div>
+    </div>
+  </div>`;
+}
+
+// ===== Render: Products =====
+function renderProducts(container, list) {
+  document.getElementById(container).innerHTML = list.map(productCard).join('');
+}
+
+// ===== Filter Logic =====
+function getFilteredProducts() {
+  let list = products;
+  if (currentCat !== 'all') list = list.filter(p => p.category === currentCat);
+  if (currentFilter === 'collector') list = list.filter(p => p.edition === 'collector');
+  else if (currentFilter === 'standard') list = list.filter(p => p.edition === 'standard');
+  else if (currentFilter === 'nft') list = list.filter(p => p.edition === 'nft');
+  else if (currentFilter === 'available') list = list.filter(p => p.sold < p.total);
+  else if (currentFilter === 'soldout') list = list.filter(p => p.sold >= p.total);
+  return list;
+}
+
+function setFilter(f) {
+  currentFilter = f;
+  document.querySelectorAll('#shop-filters .filter-btn').forEach(b => b.classList.toggle('active', b.dataset.filter === f));
+  renderProducts('shop-products', getFilteredProducts());
+}
+
+function filterByCat(catId) {
+  currentCat = catId;
+  location.hash = '#shop';
+  setTimeout(() => {
+    renderShopCats();
+    renderProducts('shop-products', getFilteredProducts());
+  }, 50);
+}
+
+// ===== Product Detail =====
+function openProduct(id) {
+  currentProduct = products.find(p => p.id === id);
+  selectedSize = 'a2';
+  selectedDelivery = 'print';
+  location.hash = '#product';
+  setTimeout(renderProductDetail, 50);
+}
+
+function renderProductDetail() {
+  const p = currentProduct;
+  if (!p) return;
+  const cat = categories.find(c => c.id === p.category);
+  const soldOut = p.sold >= p.total;
+  const size = sizes.find(s => s.id === selectedSize);
+  const del = deliveries.find(d => d.id === selectedDelivery);
+  const total = p.price + size.priceAdd + del.price;
+
+  let html = `<div class="detail-layout">
+    <div class="detail-gallery">
+      <div class="detail-main-img"><img src="${p.image}" alt="${p.name}"></div>
+      <div class="detail-thumbs">
+        <div class="detail-thumb active"><img src="${p.image}" alt=""></div>
+        <div class="detail-thumb"><img src="${p.image}" alt="" style="filter:hue-rotate(20deg)"></div>
+        <div class="detail-thumb"><img src="${p.image}" alt="" style="filter:brightness(0.9)"></div>
+      </div>
+    </div>
+    <div class="detail-info">
+      <span class="detail-cat-badge">${cat.nameZh} · ${cat.name}</span>
+      <h2>${p.name}</h2>
+      <div class="detail-artist">by ${p.artist} <span class="dot"></span> Edition of ${p.total} <span class="dot"></span> ${p.total - p.sold} remaining</div>
+      <div class="detail-price-row">
+        <span class="detail-price">$${p.price}</span>
+        <span class="detail-price-note">Starting price · Size and delivery options below</span>
+      </div>
+
+      <div class="option-group">
+        <div class="option-label">Size <span class="hint">90×90 matches classic silk scarf dimension</span></div>
+        <div class="size-options">
+          ${sizes.map(s => `<div class="size-opt ${selectedSize===s.id?'active':''}" onclick="selectSize('${s.id}')">
+            <div class="size-name">${s.name}</div>
+            <div class="size-dim">${s.dim}</div>
+            <div class="size-price">${s.priceAdd > 0 ? '+$' + s.priceAdd : 'Included'}</div>
+          </div>`).join('')}
+        </div>
+      </div>
+
+      <div class="option-group">
+        <div class="option-label">Delivery Format</div>
+        <div class="delivery-options">
+          ${deliveries.map(d => `<div class="delivery-opt ${selectedDelivery===d.id?'active':''}" onclick="selectDelivery('${d.id}')">
+            <div><div class="del-name">${d.name}</div><div class="del-desc">${d.desc}</div></div>
+            <div class="del-price">${d.price > 0 ? '+$' + d.price : 'Free'}</div>
+          </div>`).join('')}
+        </div>
+      </div>
+
+      <div class="detail-total">
+        <span class="total-label">Total</span>
+        <span class="total-value">$${total}</span>
+      </div>
+
+      ${soldOut ? `<button class="btn-waitlist">Join Waitlist for Next Drop</button>` : `<button class="btn-add-cart" onclick="showToast('Added to cart — ${p.name}')">Add to Cart</button>`}
+
+      ${p.edition === 'nft' ? `<div class="nft-box">
+        <h4>NFT 1/1 Edition <span class="nft-tag">Blockchain Verified</span></h4>
+        <p>This is the unique 1-of-1 NFT edition of this work. Includes the physical silk print + a blockchain-verified digital token with 8–10% royalty for secondary sales. Auctioned separately to the highest bidder.</p>
+        <div class="nft-meta"><span>1 of 1</span><span>Smart Contract Verified</span><span>8–10% Royalty</span></div>
+      </div>` : ''}
+
+      ${p.edition === 'collector' ? `<div class="certificate-box">
+        <h4>Collector's Edition Certificate</h4>
+        <ul>
+          <li>Hand-embroidered edition number on silk reverse</li>
+          <li>Separate certificate of authenticity on archival paper</li>
+          <li>Strictly limited — ${p.total} pieces worldwide</li>
+          <li>Sold out = never reprinted, no matter demand</li>
+          <li>Dissolvable backing — wear as silk scarf or frame as art</li>
+        </ul>
+      </div>` : ''}
+
+      <div class="detail-desc">
+        <h3>About This Work</h3>
+        <p>${p.desc}</p>
+        <p>Printed on premium mulberry silk with micro-jet technology. Every LYS piece features a dissolvable paper backing — keep it framed as museum-grade wall art, or rinse away the backing to reveal pure silk, ready to wear.</p>
+      </div>
+    </div>
+  </div>`;
+  document.getElementById('product-detail-content').innerHTML = html;
+}
+
+function selectSize(id) { selectedSize = id; renderProductDetail(); }
+function selectDelivery(id) { selectedDelivery = id; renderProductDetail(); }
+
+// ===== Exhibitions =====
+function renderExhibitions(tab) {
+  let list = exhibitions.filter(e => e.status === tab);
+  if (list.length === 0) list = exhibitions;
+  document.getElementById('exhibition-list').innerHTML = list.map(e => `
+    <div class="exhibition-card">
+      <div class="ex-img"><img src="${e.image}" alt="${e.title}"></div>
+      <div class="ex-content">
+        <span class="ex-type-tag ${e.type==='theme'?'ex-type-theme':'ex-type-solo'}">${e.typeLabel}</span>
+        <h4>${e.title}</h4>
+        <div class="ex-meta">
+          <span>${e.location}</span>
+          <span>${e.date}</span>
+          ${e.status==='current' ? '<span class="ex-live">● Now Showing</span>' : ''}
+        </div>
+        <p class="ex-desc">${e.desc}</p>
+        <div class="ex-works">${e.works.map(w => `<span class="ex-work-tag">${w}</span>`).join('')}</div>
+      </div>
+    </div>
+  `).join('');
+}
+
+// ===== Router =====
+function router() {
+  const hash = location.hash.slice(1) || 'home';
+  const route = hash.split('/')[0];
+  document.querySelectorAll('.view').forEach(v => v.classList.remove('active'));
+  document.querySelectorAll('.nav-links a').forEach(a => a.classList.toggle('active', a.dataset.route === route));
+  const view = document.getElementById('view-' + route);
+  if (view) view.classList.add('active');
+  window.scrollTo(0, 0);
+  document.getElementById('navLinks').classList.remove('open');
+}
+
+// ===== Countdown =====
+function updateCountdown() {
+  const target = new Date();
+  target.setDate(target.getDate() + 47);
+  target.setHours(10, 0, 0, 0);
+  const now = new Date();
+  const diff = target - now;
+  if (diff <= 0) return;
+  const d = Math.floor(diff / 86400000);
+  const h = Math.floor((diff % 86400000) / 3600000);
+  const m = Math.floor((diff % 3600000) / 60000);
+  const s = Math.floor((diff % 60000) / 1000);
+  document.getElementById('cd-days').textContent = String(d).padStart(2, '0');
+  document.getElementById('cd-hours').textContent = String(h).padStart(2, '0');
+  document.getElementById('cd-mins').textContent = String(m).padStart(2, '0');
+  document.getElementById('cd-secs').textContent = String(s).padStart(2, '0');
+}
+
+// ===== Utilities =====
+function toggleNav() { document.getElementById('navLinks').classList.toggle('open'); }
+function showToast(msg) {
+  const t = document.getElementById('toast');
+  t.textContent = msg;
+  t.classList.add('show');
+  setTimeout(() => t.classList.remove('show'), 2500);
+}
+function submitForm(e) {
+  e.preventDefault();
+  document.getElementById('apply-form').style.display = 'none';
+  document.getElementById('form-success').classList.add('show');
+}
+
+// ===== Init =====
+window.addEventListener('hashchange', router);
+document.querySelectorAll('#shop-filters .filter-btn').forEach(btn => {
+  btn.addEventListener('click', () => setFilter(btn.dataset.filter));
+});
+document.querySelectorAll('#ex-tabs .ex-tab').forEach(tab => {
+  tab.addEventListener('click', () => {
+    document.querySelectorAll('#ex-tabs .ex-tab').forEach(t => t.classList.remove('active'));
+    tab.classList.add('active');
+    renderExhibitions(tab.dataset.tab);
+  });
+});
+
+renderCategories('home-categories');
+renderProducts('home-products', products.slice(0, 4));
+renderShopCats();
+renderProducts('shop-products', products);
+renderExhibitions('current');
+updateCountdown();
+setInterval(updateCountdown, 1000);
+router();
+</script>
+</body>
+</html>

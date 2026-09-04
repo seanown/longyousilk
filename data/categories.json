@@ -1,0 +1,14 @@
+[
+  { "id": "cinema", "num": "01", "name": "Cinema Collection", "nameZh": "光影收藏", "group": "Universe", "desc": "Iconic film moments and original movie poster art, reimagined on silk. One Sheet size matches the theatrical standard." },
+  { "id": "anime", "num": "02", "name": "Anime Universe", "nameZh": "动漫宇宙", "group": "Universe", "desc": "Anime and manga-inspired art, from classic cel-shading to contemporary digital illustration." },
+  { "id": "legends", "num": "03", "name": "Legends Gallery", "nameZh": "名人殿堂", "group": "Universe", "desc": "Iconic figures — musicians, athletes, actors, thinkers — co-created with visual artists. Not photos, but artistic interpretations." },
+  { "id": "sonic", "num": "04", "name": "Sonic Echoes", "nameZh": "音乐回声", "group": "Universe", "desc": "Album art, band posters, and music-inspired visual art. The visual language of sound, on silk." },
+  { "id": "palace", "num": "05", "name": "Palace Reimagined", "nameZh": "故宫新生", "group": "Eastern", "desc": "Forbidden City motifs, imperial patterns, and museum artifacts — reimagined by contemporary artists. Beijing, Taipei, and beyond." },
+  { "id": "dunhuang", "num": "06", "name": "Dunhuang Reimagined", "nameZh": "敦煌新生", "group": "Eastern", "desc": "Dunhuang frescoes, flying apsaras, and Silk Road heritage — brought to life on the very material that once traveled the route." },
+  { "id": "nantian", "num": "07", "name": "Nantian Gate", "nameZh": "南天门", "group": "Eastern", "desc": "Deities, immortals, and mythological figures from Chinese folklore. Character-driven, powerful, and contemporary." },
+  { "id": "mood", "num": "08", "name": "Eastern Mood", "nameZh": "东方意境", "group": "Eastern", "desc": "Abstract Eastern aesthetics — negative space, ink washes, floral stillness. Mood over narrative, feeling over form." },
+  { "id": "cyber", "num": "09", "name": "Cyber Orient", "nameZh": "赛博东方", "group": "Western", "desc": "Neon-lit futurism fused with Eastern iconography. Cyberpunk cities, techno-geishas, and digital dynasty aesthetics." },
+  { "id": "street", "num": "10", "name": "Eastern Street", "nameZh": "东方街头", "group": "Western", "desc": "Graffiti, street art, and urban culture with Eastern roots. Where the gallery meets the alleyway." },
+  { "id": "gaze", "num": "11", "name": "The Other Gaze", "nameZh": "他者之眼", "group": "Western", "desc": "Non-Eastern artists interpreting Eastern themes. A dedicated category for Western creators to redefine Oriental aesthetics." },
+  { "id": "scifi", "num": "12", "name": "Eastern Sci-Fi", "nameZh": "东方科幻", "group": "Western", "desc": "Science fiction through an Eastern lens — mythical beasts reimagined as mecha, ancient futures, and cosmic mythology." }
+]

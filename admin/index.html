@@ -1,0 +1,395 @@
+<!DOCTYPE html>
+<html lang="zh-Hant">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>LYS 後台管理</title>
+<style>
+:root{
+  --red:#A02020; --red-deep:#7A1818; --gold:#C9A96E; --gold-dark:#9A7D4F;
+  --ivory:#FAF7F0; --ivory-deep:#F0EBE0; --ink:#1C1C1C; --ink-soft:#3A3A3A;
+  --ink-muted:#6B6B6B; --line:rgba(28,28,28,0.12); --white:#FFFFFF;
+}
+*{margin:0;padding:0;box-sizing:border-box;}
+body{font-family:-apple-system,"Microsoft JhengHei","PingFang TC",sans-serif;background:var(--ivory);color:var(--ink);font-size:14px;line-height:1.6;}
+
+/* 登入 */
+#login{position:fixed;inset:0;background:var(--ivory);display:flex;align-items:center;justify-content:center;z-index:100;}
+.login-box{background:var(--white);padding:40px;border:1px solid var(--line);width:360px;text-align:center;}
+.login-box h1{font-size:22px;letter-spacing:2px;margin-bottom:6px;}
+.login-box p{color:var(--ink-muted);font-size:13px;margin-bottom:24px;}
+.login-box input{width:100%;padding:12px;border:1px solid var(--line);font-size:14px;margin-bottom:14px;font-family:inherit;}
+.login-box button{width:100%;padding:12px;background:var(--red);color:#fff;border:none;font-size:14px;cursor:pointer;font-family:inherit;letter-spacing:1px;}
+.login-box button:hover{background:var(--red-deep);}
+.err{color:var(--red);font-size:13px;margin-top:12px;display:none;}
+
+/* 頂部 */
+header{background:var(--white);border-bottom:1px solid var(--line);padding:0 28px;display:flex;align-items:center;justify-content:space-between;height:64px;position:sticky;top:0;z-index:50;}
+.brand{display:flex;align-items:baseline;gap:12px;}
+.brand h1{font-size:18px;letter-spacing:3px;}
+.brand span{font-size:12px;color:var(--ink-muted);}
+nav{display:flex;gap:4px;}
+nav button{padding:9px 18px;background:none;border:none;cursor:pointer;font-size:14px;color:var(--ink-soft);font-family:inherit;border-bottom:2px solid transparent;}
+nav button.active{color:var(--red);border-bottom-color:var(--red);}
+nav button:hover{color:var(--red);}
+.user{font-size:13px;color:var(--ink-muted);display:flex;align-items:center;gap:14px;}
+.user a{color:var(--ink-muted);cursor:pointer;text-decoration:underline;}
+
+main{padding:28px;max-width:1280px;margin:0 auto;}
+.tabpanel{display:none;}
+.tabpanel.active{display:block;}
+
+.bar{display:flex;justify-content:space-between;align-items:center;margin-bottom:18px;}
+.bar h2{font-size:17px;font-weight:500;}
+.bar .hint{font-size:13px;color:var(--ink-muted);margin-top:2px;}
+
+.btn{padding:9px 18px;background:var(--red);color:#fff;border:none;cursor:pointer;font-size:13px;font-family:inherit;letter-spacing:.5px;}
+.btn:hover{background:var(--red-deep);}
+.btn.ghost{background:var(--white);color:var(--ink);border:1px solid var(--line);}
+.btn.ghost:hover{background:var(--ivory-deep);}
+.btn.small{padding:5px 12px;font-size:12px;}
+.btn.danger{background:var(--white);color:var(--red);border:1px solid rgba(160,32,32,0.3);}
+.btn.danger:hover{background:#FCEBEB;}
+
+table{width:100%;border-collapse:collapse;background:var(--white);border:1px solid var(--line);}
+th{text-align:left;padding:12px 14px;font-size:12px;color:var(--ink-muted);font-weight:500;border-bottom:1px solid var(--line);background:var(--ivory);letter-spacing:.5px;}
+td{padding:10px 14px;border-bottom:1px solid var(--line);vertical-align:middle;}
+tr:last-child td{border-bottom:none;}
+tr:hover td{background:var(--ivory);}
+td.num{text-align:right;font-variant-numeric:tabular-nums;}
+th.num{text-align:right;}
+
+.thumb{width:52px;height:52px;object-fit:cover;background:var(--ivory-deep);display:block;}
+.thumb.empty{display:flex;align-items:center;justify-content:center;font-size:10px;color:var(--ink-muted);text-align:center;padding:4px;}
+.name{font-weight:500;}
+.sub{font-size:12px;color:var(--ink-muted);}
+.tag{display:inline-block;padding:3px 9px;font-size:11px;letter-spacing:.5px;border:1px solid;}
+.tag.collector{color:var(--gold-dark);border-color:var(--gold);background:rgba(201,169,110,0.1);}
+.tag.standard{color:var(--ink-muted);border-color:var(--line);}
+.tag.nft{color:var(--red);border-color:rgba(160,32,32,0.3);background:rgba(160,32,32,0.06);}
+.sold-out{color:var(--red);font-size:12px;}
+.in-stock{color:var(--ink-muted);font-size:12px;}
+.actions{display:flex;gap:6px;}
+
+/* 彈窗 */
+.modal{position:fixed;inset:0;background:rgba(28,28,28,0.45);display:none;align-items:center;justify-content:center;z-index:200;padding:24px;}
+.modal.open{display:flex;}
+.modal-box{background:var(--white);width:100%;max-width:620px;max-height:88vh;overflow-y:auto;}
+.modal-head{padding:20px 24px;border-bottom:1px solid var(--line);display:flex;justify-content:space-between;align-items:center;}
+.modal-head h3{font-size:16px;font-weight:500;}
+.modal-head .x{cursor:pointer;color:var(--ink-muted);font-size:20px;line-height:1;}
+.modal-body{padding:24px;}
+.modal-foot{padding:16px 24px;border-top:1px solid var(--line);display:flex;justify-content:flex-end;gap:10px;background:var(--ivory);}
+
+.field{margin-bottom:16px;}
+.field label{display:block;font-size:12px;color:var(--ink-muted);margin-bottom:6px;letter-spacing:.5px;}
+.field input,.field select,.field textarea{width:100%;padding:10px 12px;border:1px solid var(--line);font-size:14px;font-family:inherit;background:var(--white);}
+.field textarea{min-height:88px;resize:vertical;}
+.field input:focus,.field select:focus,.field textarea:focus{outline:none;border-color:var(--red);}
+.row2{display:grid;grid-template-columns:1fr 1fr;gap:14px;}
+.row3{display:grid;grid-template-columns:1fr 1fr 1fr;gap:14px;}
+
+.img-row{display:flex;gap:12px;align-items:flex-start;}
+.img-preview{width:96px;height:96px;object-fit:cover;background:var(--ivory-deep);flex-shrink:0;}
+.img-preview.none{display:flex;align-items:center;justify-content:center;font-size:11px;color:var(--ink-muted);text-align:center;padding:8px;}
+.img-actions{flex:1;display:flex;flex-direction:column;gap:8px;}
+.img-actions input{padding:8px 10px;font-size:12px;}
+
+.toast{position:fixed;bottom:28px;left:50%;transform:translateX(-50%);background:var(--ink);color:#fff;padding:12px 24px;font-size:13px;opacity:0;pointer-events:none;transition:opacity .25s;z-index:300;}
+.toast.show{opacity:1;}
+
+.empty-state{padding:48px;text-align:center;color:var(--ink-muted);background:var(--white);border:1px solid var(--line);}
+</style>
+</head>
+<body>
+
+<div id="login">
+  <div class="login-box">
+    <h1>LYS</h1>
+    <p>後台管理系統</p>
+    <input type="password" id="pw" placeholder="請輸入密碼" autocomplete="current-password">
+    <button onclick="doLogin()">登入</button>
+    <div class="err" id="loginErr">密碼不對，再試一次</div>
+  </div>
+</div>
+
+<header>
+  <div class="brand"><h1>LYS</h1><span>後台管理</span></div>
+  <nav>
+    <button class="active" data-tab="products" onclick="switchTab('products')">作品管理</button>
+    <button data-tab="exhibitions" onclick="switchTab('exhibitions')">展覽管理</button>
+    <button data-tab="applications" onclick="switchTab('applications')">藝術家申請</button>
+  </nav>
+  <div class="user"><span id="saveHint">已載入</span><a onclick="doLogout()">登出</a></div>
+</header>
+
+<main>
+  <section id="tab-products" class="tabpanel active">
+    <div class="bar">
+      <div><h2>作品管理</h2><div class="hint">改完會自動儲存，網站前台馬上更新</div></div>
+      <button class="btn" onclick="editProduct(null)">＋ 新增作品</button>
+    </div>
+    <div id="productsTable"></div>
+  </section>
+
+  <section id="tab-exhibitions" class="tabpanel">
+    <div class="bar">
+      <div><h2>展覽管理</h2><div class="hint">狀態選 current 才會顯示在首頁</div></div>
+      <button class="btn" onclick="editExhibition(null)">＋ 新增展覽</button>
+    </div>
+    <div id="exhibitionsTable"></div>
+  </section>
+
+  <section id="tab-applications" class="tabpanel">
+    <div class="bar">
+      <div><h2>藝術家申請</h2><div class="hint">訪客在網站填的投稿資料會出現在這裡</div></div>
+      <button class="btn ghost" onclick="loadApplications()">重新整理</button>
+    </div>
+    <div id="applicationsTable"></div>
+  </section>
+</main>
+
+<div class="modal" id="modal">
+  <div class="modal-box">
+    <div class="modal-head"><h3 id="modalTitle">編輯</h3><span class="x" onclick="closeModal()">&times;</span></div>
+    <div class="modal-body" id="modalBody"></div>
+    <div class="modal-foot">
+      <button class="btn ghost" onclick="closeModal()">取消</button>
+      <button class="btn" id="modalSave">儲存</button>
+    </div>
+  </div>
+</div>
+
+<div class="toast" id="toast"></div>
+
+<script>
+let token = localStorage.getItem('lys_token') || '';
+let products = [], exhibitions = [], categories = [], applications = [];
+
+const $ = id => document.getElementById(id);
+
+function toast(msg){
+  const t = $('toast'); t.textContent = msg; t.classList.add('show');
+  clearTimeout(t._h); t._h = setTimeout(()=>t.classList.remove('show'), 2200);
+}
+
+async function api(path, opts){
+  opts = opts || {};
+  opts.headers = Object.assign({'Content-Type':'application/json','X-LYS-Token':token}, opts.headers||{});
+  const r = await fetch(path, opts);
+  return await r.json();
+}
+
+async function doLogin(){
+  const pw = $('pw').value;
+  const r = await fetch('/api/login',{method:'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify({password:pw})});
+  const j = await r.json();
+  if(j.ok){ token = j.token; localStorage.setItem('lys_token',token); $('login').style.display='none'; init(); }
+  else { $('loginErr').style.display='block'; }
+}
+function doLogout(){ token=''; localStorage.removeItem('lys_token'); location.reload(); }
+
+async function init(){
+  if(token){
+    try{
+      const r = await api('/api/data?type=products');
+      if(r.ok){ token_valid(); return; }
+    }catch(e){}
+  }
+  $('login').style.display='flex';
+}
+async function token_valid(){
+  $('login').style.display='none';
+  products     = (await api('/api/data?type=products')).data || [];
+  exhibitions  = (await api('/api/data?type=exhibitions')).data || [];
+  categories   = (await api('/api/data?type=categories')).data || [];
+  applications = (await api('/api/data?type=applications')).data || [];
+  renderProducts(); renderExhibitions(); renderApplications();
+}
+
+function switchTab(name){
+  document.querySelectorAll('nav button').forEach(b=>b.classList.toggle('active', b.dataset.tab===name));
+  document.querySelectorAll('.tabpanel').forEach(p=>p.classList.toggle('active', p.id==='tab-'+name));
+}
+
+async function save(type){
+  const map = {products:products, exhibitions:exhibitions, applications:applications};
+  const r = await api('/api/data?type='+type,{method:'POST',body:JSON.stringify(map[type])});
+  if(r.ok){ $('saveHint').textContent='已儲存 ' + new Date().toLocaleTimeString('zh-TW'); toast('已儲存'); }
+  else { toast('儲存失敗：'+(r.error||'')); }
+}
+
+const esc = s => String(s==null?'':s).replace(/[&<>"]/g,c=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;'}[c]));
+const catName = id => { const c = categories.find(x=>x.id===id); return c ? c.nameZh + ' · ' + c.name : id; };
+const edLabel = {collector:"Collector's", standard:'Standard', nft:'NFT 1/1'};
+
+function renderProducts(){
+  if(!products.length){ $('productsTable').innerHTML='<div class="empty-state">還沒有作品，點右上角「新增作品」開始</div>'; return; }
+  let h = '<table><thead><tr><th></th><th>作品</th><th>分類</th><th>版本</th><th class="num">價格</th><th class="num">已售</th><th>狀態</th><th></th></tr></thead><tbody>';
+  products.forEach((p,i)=>{
+    const out = p.sold >= p.total;
+    h += '<tr>'
+      + '<td>' + (p.image ? '<img class="thumb" src="/'+esc(p.image)+'">' : '<div class="thumb empty">無圖</div>') + '</td>'
+      + '<td><div class="name">'+esc(p.name)+'</div><div class="sub">'+esc(p.artist)+'</div></td>'
+      + '<td><span class="sub">'+esc(catName(p.category))+'</span></td>'
+      + '<td><span class="tag '+esc(p.edition)+'">'+esc(edLabel[p.edition]||p.edition)+'</span></td>'
+      + '<td class="num">$'+Number(p.price).toLocaleString()+'</td>'
+      + '<td class="num">'+p.sold+' / '+p.total+'</td>'
+      + '<td>'+(out?'<span class="sold-out">已售完</span>':'<span class="in-stock">販售中</span>')+'</td>'
+      + '<td><div class="actions"><button class="btn ghost small" onclick="editProduct('+i+')">編輯</button>'
+      + '<button class="btn danger small" onclick="delProduct('+i+')">刪除</button></div></td></tr>';
+  });
+  $('productsTable').innerHTML = h + '</tbody></table>';
+}
+
+function editProduct(i){
+  const p = i===null ? {id:Date.now(),name:'',artist:'',category:'palace',edition:'collector',price:0,total:50,sold:0,image:'',desc:''} : products[i];
+  const opts = categories.map(c=>'<option value="'+c.id+'"'+(c.id===p.category?' selected':'')+'>'+esc(c.nameZh+' · '+c.name)+'</option>').join('');
+  $('modalTitle').textContent = i===null ? '新增作品' : '編輯作品';
+  $('modalBody').innerHTML = ''
+    + '<div class="row2"><div class="field"><label>作品名稱</label><input id="f_name" value="'+esc(p.name)+'"></div>'
+    + '<div class="field"><label>藝術家</label><input id="f_artist" value="'+esc(p.artist)+'"></div></div>'
+    + '<div class="row2"><div class="field"><label>分類</label><select id="f_category">'+opts+'</select></div>'
+    + '<div class="field"><label>版本</label><select id="f_edition">'
+    + Object.keys(edLabel).map(k=>'<option value="'+k+'"'+(k===p.edition?' selected':'')+'>'+edLabel[k]+'</option>').join('')
+    + '</select></div></div>'
+    + '<div class="row3"><div class="field"><label>價格 (USD)</label><input id="f_price" type="number" value="'+p.price+'"></div>'
+    + '<div class="field"><label>總版數</label><input id="f_total" type="number" value="'+p.total+'"></div>'
+    + '<div class="field"><label>已售出</label><input id="f_sold" type="number" value="'+p.sold+'"></div></div>'
+    + '<div class="field"><label>作品圖片</label><div class="img-row">'
+    + '<img class="img-preview'+(p.image?'':' none')+'" id="f_prev" src="'+(p.image? '/'+esc(p.image) : '')+'" '+(p.image?'':'data-empty="1"')+'>'
+    + '<div class="img-actions"><input id="f_image" value="'+esc(p.image)+'" placeholder="圖片路徑，或按下面的按鈕上傳">'
+    + '<input type="file" id="f_file" accept="image/*" style="font-size:12px">'
+    + '<span class="sub">上傳後會自動填入路徑</span></div></div></div>'
+    + '<div class="field"><label>作品介紹</label><textarea id="f_desc">'+esc(p.desc)+'</textarea></div>';
+
+  $('f_file').onchange = async e => {
+    const file = e.target.files[0]; if(!file) return;
+    const reader = new FileReader();
+    reader.onload = async ev => {
+      const r = await api('/api/upload',{method:'POST',body:JSON.stringify({dataUrl:ev.target.result, name:file.name.replace(/\.[^.]+$/,'')})});
+      if(r.ok){ $('f_image').value = r.path; $('f_prev').src='/'+r.path; $('f_prev').classList.remove('none'); toast('圖片已上傳'); }
+      else toast('上傳失敗');
+    };
+    reader.readAsDataURL(file);
+  };
+  $('f_image').oninput = e => {
+    const v = e.target.value;
+    const img = $('f_prev');
+    if(v){ img.src = v.startsWith('http') ? v : '/'+v; img.classList.remove('none'); }
+    else { img.removeAttribute('src'); img.classList.add('none'); }
+  };
+
+  $('modalSave').onclick = () => {
+    const item = {
+      id: p.id, name: $('f_name').value.trim(), artist: $('f_artist').value.trim(),
+      category: $('f_category').value, edition: $('f_edition').value,
+      price: Number($('f_price').value)||0, total: Number($('f_total').value)||0,
+      sold: Number($('f_sold').value)||0, image: $('f_image').value.trim(), desc: $('f_desc').value.trim()
+    };
+    if(!item.name){ toast('請填作品名稱'); return; }
+    if(i===null) products.push(item); else products[i] = item;
+    renderProducts(); save('products'); closeModal();
+  };
+  $('modal').classList.add('open');
+}
+
+function delProduct(i){
+  if(!confirm('確定刪除「'+products[i].name+'」？')) return;
+  products.splice(i,1); renderProducts(); save('products');
+}
+
+function renderExhibitions(){
+  if(!exhibitions.length){ $('exhibitionsTable').innerHTML='<div class="empty-state">還沒有展覽</div>'; return; }
+  const st = {current:'展出中', upcoming:'即將展出', past:'已結束'};
+  let h = '<table><thead><tr><th>展覽</th><th>類型</th><th>地點</th><th>日期</th><th>狀態</th><th></th></tr></thead><tbody>';
+  exhibitions.forEach((e,i)=>{
+    h += '<tr><td><div class="name">'+esc(e.title)+'</div><div class="sub">'+esc((e.works||[]).join('、'))+'</div></td>'
+      + '<td><span class="sub">'+esc(e.typeLabel||e.type)+'</span></td>'
+      + '<td><span class="sub">'+esc(e.location)+'</span></td>'
+      + '<td><span class="sub">'+esc(e.date)+'</span></td>'
+      + '<td>'+(e.status==='current'?'<span class="sold-out">'+st[e.status]+'</span>':'<span class="in-stock">'+esc(st[e.status]||e.status)+'</span>')+'</td>'
+      + '<td><div class="actions"><button class="btn ghost small" onclick="editExhibition('+i+')">編輯</button>'
+      + '<button class="btn danger small" onclick="delExhibition('+i+')">刪除</button></div></td></tr>';
+  });
+  $('exhibitionsTable').innerHTML = h + '</tbody></table>';
+}
+
+function editExhibition(i){
+  const e = i===null ? {id:Date.now(),title:'',type:'theme',typeLabel:'Theme Exhibition',status:'upcoming',location:'',date:'',works:[],desc:'',image:''} : exhibitions[i];
+  $('modalTitle').textContent = i===null ? '新增展覽' : '編輯展覽';
+  $('modalBody').innerHTML = ''
+    + '<div class="field"><label>展覽名稱</label><input id="e_title" value="'+esc(e.title)+'"></div>'
+    + '<div class="row3"><div class="field"><label>類型</label><select id="e_type">'
+    + '<option value="theme"'+(e.type==='theme'?' selected':'')+'>主題展 Theme</option>'
+    + '<option value="solo"'+(e.type==='solo'?' selected':'')+'>個展 Solo</option></select></div>'
+    + '<div class="field"><label>狀態</label><select id="e_status">'
+    + '<option value="current"'+(e.status==='current'?' selected':'')+'>展出中</option>'
+    + '<option value="upcoming"'+(e.status==='upcoming'?' selected':'')+'>即將展出</option>'
+    + '<option value="past"'+(e.status==='past'?' selected':'')+'>已結束</option></select></div>'
+    + '<div class="field"><label>日期</label><input id="e_date" value="'+esc(e.date)+'" placeholder="Oct 1 – Dec 15, 2026"></div></div>'
+    + '<div class="field"><label>地點</label><input id="e_location" value="'+esc(e.location)+'"></div>'
+    + '<div class="field"><label>展出作品（用逗號分隔）</label><input id="e_works" value="'+esc((e.works||[]).join(', '))+'"></div>'
+    + '<div class="field"><label>展覽圖片</label><div class="img-row">'
+    + '<img class="img-preview'+(e.image?'':' none')+'" id="e_prev" src="'+(e.image?'/'+esc(e.image):'')+'">'
+    + '<div class="img-actions"><input id="e_image" value="'+esc(e.image)+'">'
+    + '<input type="file" id="e_file" accept="image/*" style="font-size:12px"></div></div></div>'
+    + '<div class="field"><label>展覽介紹</label><textarea id="e_desc">'+esc(e.desc)+'</textarea></div>';
+
+  $('e_file').onchange = ev2 => {
+    const file = ev2.target.files[0]; if(!file) return;
+    const reader = new FileReader();
+    reader.onload = async ev => {
+      const r = await api('/api/upload',{method:'POST',body:JSON.stringify({dataUrl:ev.target.result, name:file.name.replace(/\.[^.]+$/,'')})});
+      if(r.ok){ $('e_image').value = r.path; $('e_prev').src='/'+r.path; $('e_prev').classList.remove('none'); toast('圖片已上傳'); }
+    };
+    reader.readAsDataURL(file);
+  };
+
+  $('modalSave').onclick = () => {
+    const item = {
+      id: e.id, title: $('e_title').value.trim(), type: $('e_type').value,
+      typeLabel: $('e_type').value==='solo' ? 'Solo Exhibition' : 'Theme Exhibition',
+      status: $('e_status').value, location: $('e_location').value.trim(), date: $('e_date').value.trim(),
+      works: $('e_works').value.split(',').map(s=>s.trim()).filter(Boolean),
+      desc: $('e_desc').value.trim(), image: $('e_image').value.trim()
+    };
+    if(!item.title){ toast('請填展覽名稱'); return; }
+    if(i===null) exhibitions.push(item); else exhibitions[i] = item;
+    renderExhibitions(); save('exhibitions'); closeModal();
+  };
+  $('modal').classList.add('open');
+}
+
+function delExhibition(i){
+  if(!confirm('確定刪除「'+exhibitions[i].title+'」？')) return;
+  exhibitions.splice(i,1); renderExhibitions(); save('exhibitions');
+}
+
+async function loadApplications(){
+  applications = (await api('/api/data?type=applications')).data || [];
+  renderApplications(); toast('已重新整理');
+}
+
+function renderApplications(){
+  if(!applications.length){ $('applicationsTable').innerHTML='<div class="empty-state">目前還沒有收到申請</div>'; return; }
+  let h = '<table><thead><tr><th>姓名</th><th>Email</th><th>作品集</th><th>訊息</th><th>送出時間</th><th>狀態</th></tr></thead><tbody>';
+  [...applications].reverse().forEach(a=>{
+    h += '<tr><td><div class="name">'+esc(a.name)+'</div></td>'
+      + '<td><span class="sub">'+esc(a.email)+'</span></td>'
+      + '<td>'+(a.portfolio?'<a href="'+esc(a.portfolio)+'" target="_blank" style="color:var(--red)">查看</a>':'<span class="sub">—</span>')+'</td>'
+      + '<td><span class="sub">'+esc((a.message||'').slice(0,60))+'</span></td>'
+      + '<td><span class="sub">'+esc((a.submittedAt||'').slice(0,16).replace('T',' '))+'</span></td>'
+      + '<td><span class="'+(a.status==='pending'?'sold-out':'in-stock')+'">'+esc(a.status==='pending'?'待處理':'已處理')+'</span></td></tr>';
+  });
+  $('applicationsTable').innerHTML = h + '</tbody></table>';
+}
+
+function closeModal(){ $('modal').classList.remove('open'); }
+$('modal').addEventListener('click', ev => { if(ev.target.id==='modal') closeModal(); });
+$('pw').addEventListener('keydown', ev => { if(ev.key==='Enter') doLogin(); });
+
+init();
+</script>
+</body>
+</html>

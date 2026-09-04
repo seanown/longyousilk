@@ -1,0 +1,62 @@
+[
+  {
+    "id": 1,
+    "title": "Cyber Orient — Neon Futures",
+    "type": "theme",
+    "typeLabel": "Theme Exhibition",
+    "status": "current",
+    "location": "Macau Art Center",
+    "date": "Sep 15 – Nov 30, 2026",
+    "works": ["Neon Kowloon", "Dragon Mecha", "Wall Dragon"],
+    "desc": "A deep dive into the Cyber Orient category — where Eastern iconography meets neon-lit futurism. Featuring 12 works from 8 international artists.",
+    "image": "assets/images/neon-kowloon.jpg"
+  },
+  {
+    "id": 2,
+    "title": "Sean Own — Silk & Vision",
+    "type": "solo",
+    "typeLabel": "Solo Exhibition",
+    "status": "current",
+    "location": "Long You Silk Culture Center, Macau",
+    "date": "Oct 1 – Dec 15, 2026",
+    "works": ["Palace Geometry", "Ink Bloom", "Flying Apsara"],
+    "desc": "A solo exhibition showcasing founder Sean Own's curatorial vision — from his early merchandising work to the LYS silk art platform. Featured on CGTN French channel.",
+    "image": "assets/images/sean-own-solo.jpg"
+  },
+  {
+    "id": 3,
+    "title": "Dunhuang — Silk Road Reimagined",
+    "type": "theme",
+    "typeLabel": "Theme Exhibition",
+    "status": "upcoming",
+    "location": "Beijing + Paris (Touring)",
+    "date": "Spring 2027",
+    "works": ["Flying Apsara", "Palace Geometry"],
+    "desc": "A touring exhibition celebrating Dunhuang frescoes and Silk Road heritage, printed on the very material that once traveled the route. Beijing premiere, then Paris.",
+    "image": "assets/images/flying-apsara.jpg"
+  },
+  {
+    "id": 4,
+    "title": "Legends Gallery — Icons Reimagined",
+    "type": "theme",
+    "typeLabel": "Theme Exhibition",
+    "status": "upcoming",
+    "location": "Taipei",
+    "date": "Summer 2027",
+    "works": ["Bruce Lee — The Flow"],
+    "desc": "Our Legends Gallery category comes to life — iconic figures from music, sports, film, and philosophy, reimagined by visual artists. Not photographs. Artistic interpretations.",
+    "image": "assets/images/bruce-lee-flow.jpg"
+  },
+  {
+    "id": 5,
+    "title": "The Other Gaze — Western Artists, Eastern Themes",
+    "type": "theme",
+    "typeLabel": "Theme Exhibition",
+    "status": "past",
+    "location": "Macau",
+    "date": "Spring 2026",
+    "works": ["The Last Emperor"],
+    "desc": "Our inaugural exhibition dedicated to non-Eastern artists interpreting Eastern themes. A bold experiment in cross-cultural artistic dialogue.",
+    "image": "assets/images/last-emperor.jpg"
+  }
+]
