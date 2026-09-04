@@ -5,30 +5,32 @@
 
 ---
 
-## 🔴 目前狀態（2026-09-05 01:30 實測）
+## ✅ 目前狀態（2026-09-05 01:42 實測 — 全部完成）
 
-**網站已經上線：https://longyousilk.onrender.com**
+**網站已上線：https://longyousilk.onrender.com**
 
 | 檢查項 | 結果 |
 |---|---|
 | 首頁 | ✅ HTTP 200 |
 | 後台 `/admin/` | ✅ HTTP 200 |
-| API（products / categories / settings / applications） | ✅ 全部 200 |
+| API（products / categories / settings / applications / exhibitions） | ✅ 五項全 200 |
+| 資料筆數 | ✅ 商品 12 件、展覽 5 檔 |
 | 作品圖（8 張） | ✅ 正常載入（如 neon-kowloon.jpg = 719,707 bytes） |
-| 展覽資料 | ✅ 有資料（Cyber Orient、Sean Own — Silk & Vision…） |
-| **後台密碼** | 🔴 **未設定 — 任何人都能用 `lys2026` 登入** |
+| **後台密碼** | ✅ **已生效** |
 
-### 實測證據
+### 密碼驗證證據（三組都測了）
 
 ```
-用 lys2026     → {"ok":true,"token":"eca2c1dd..."}   ← 登得進去，危險
-用 S@ndj1313#  → {"ok":false,"error":"wrong_password"} ← 新密碼無效
+用 lys2026     → {"ok":false,"error":"wrong_password"}  ← 舊密碼已失效 ✅
+用 S@ndj1313#  → {"ok":true,"token":"e088ec54..."}       ← 新密碼可登入 ✅
+隨便亂打       → {"ok":false,"error":"wrong_password"}  ← 有正常防護 ✅
 ```
 
-這代表 `server.js` 的環境變數改動**已經上線了**，
-但 Render 後台的 `ADMIN_PASSWORD` **還沒填**，所以程式退回預設值 `lys2026`。
+**安全性已到位**：舊的預設密碼 `lys2026` 已被擋掉，全世界只剩你知道新密碼。
 
-👉 **現在就做下面的第 2 步。**
+### 剩下唯一的事：綁自己的網址
+
+第 1 步（部署）與第 2 步（密碼）都完成了，接著做 **第 3 步：買域名 + 綁定**。
 
 ---
 
