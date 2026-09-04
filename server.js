@@ -14,7 +14,7 @@ const path = require('path');
 const crypto = require('crypto');
 
 // ===== 設定區（都可以自己改）=====
-const PORT = 3000;
+const PORT = process.env.PORT || 3000;   // 雲端平台會自己給 PORT，本機則用 3000
 const ADMIN_PASSWORD = 'lys2026';          // 後台登入密碼，請改成你自己的
 const MAX_UPLOAD_MB = 20;
 // ================================

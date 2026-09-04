@@ -1,0 +1,12 @@
+services:
+  - type: web
+    name: lys-longyousilk
+    env: node
+    plan: free
+    buildCommand: echo "零依賴，不需要 build"
+    startCommand: node server.js
+    envVars:
+      - key: NODE_VERSION
+        value: "22"
+      - key: PORT
+        value: "3000"
