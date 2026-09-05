@@ -135,6 +135,10 @@ th.num{text-align:right;}
 .paypal-link-section .link-input-row{display:flex;gap:8px;align-items:center;margin-bottom:8px;}
 .paypal-link-section .link-input-row .size-tag{min-width:60px;font-size:12px;font-weight:500;color:var(--ink-soft);}
 .paypal-link-section .link-input-row input{flex:1;padding:7px 10px;border:1px solid var(--line);font-family:monospace;font-size:12px;}
+
+.artist-av{width:38px;height:38px;border-radius:50%;overflow:hidden;background:var(--ink);display:flex;align-items:center;justify-content:center;font-family:var(--serif);font-size:15px;font-style:italic;color:var(--gold-light);flex-shrink:0;}
+.artist-av img{width:100%;height:100%;object-fit:cover;}
+.artist-tier{display:inline-block;font-size:10px;padding:2px 7px;border:1px solid var(--line);color:var(--ink-muted);letter-spacing:.5px;margin-top:3px;}
 </style>
 </head>
 <body>
@@ -154,6 +158,7 @@ th.num{text-align:right;}
   <nav>
     <button class="active" data-tab="products" onclick="switchTab('products')">作品管理</button>
     <button data-tab="exhibitions" onclick="switchTab('exhibitions')">展覽管理</button>
+    <button data-tab="artists" onclick="switchTab('artists')">藝術家管理</button>
     <button data-tab="applications" onclick="switchTab('applications')">藝術家申請</button>
     <button data-tab="settings" onclick="switchTab('settings')">支付設定</button>
   </nav>
@@ -178,6 +183,17 @@ th.num{text-align:right;}
   </section>
 
   
+  <section id="tab-artists" class="tabpanel">
+    <div class="bar">
+      <div><h2>藝術家管理</h2><div class="hint">頭像、地區、簡介、分潤階級。改完按「儲存藝術家」，前台「Meet Our Artists」與藝術家專頁同步更新。作品數由系統自動計算，不需手填。</div></div>
+      <div style="display:flex;gap:8px;">
+        <button class="btn ghost" onclick="editArtist(null)">＋ 新增藝術家</button>
+        <button class="btn" onclick="save('artists')">儲存藝術家</button>
+      </div>
+    </div>
+    <div id="artistsTable"></div>
+  </section>
+
   <section id="tab-settings" class="tabpanel">
     <div class="bar">
       <div><h2>支付設定</h2><div class="hint">PayPal handle、幣別匯率、分潤階級、NFT 開關。改完按「儲存全部設定」一次寫回。</div></div>
@@ -240,7 +256,7 @@ th.num{text-align:right;}
 
 <script>
 let token = localStorage.getItem('lys_token') || '';
-let products = [], exhibitions = [], categories = [], applications = [], settings = {};
+let products = [], exhibitions = [], categories = [], applications = [], settings = {}, artists = [];
 
 const $ = id => document.getElementById(id);
 
@@ -280,7 +296,8 @@ async function token_valid(){
   exhibitions  = (await api('/api/data?type=exhibitions')).data || [];
   categories   = (await api('/api/data?type=categories')).data || [];
   applications = (await api('/api/data?type=applications')).data || [];
-  renderProducts(); renderExhibitions(); renderApplications(); renderSettings();
+  artists      = (await api('/api/data?type=artists')).data || [];
+  renderProducts(); renderExhibitions(); renderApplications(); renderSettings(); renderArtists();
 }
 
 function switchTab(name){
@@ -289,7 +306,7 @@ function switchTab(name){
 }
 
 async function save(type){
-  const map = {products:products, exhibitions:exhibitions, applications:applications};
+  const map = {products:products, exhibitions:exhibitions, applications:applications, artists:artists};
   const r = await api('/api/data?type='+type,{method:'POST',body:JSON.stringify(map[type])});
   if(r.ok){ $('saveHint').textContent='已儲存 ' + new Date().toLocaleTimeString('zh-TW'); toast('已儲存'); }
   else { toast('儲存失敗：'+(r.error||'')); }
@@ -319,12 +336,16 @@ function renderProducts(){
 }
 
 function editProduct(i){
-  const p = i===null ? {id:Date.now(),name:'',artist:'',category:'palace',edition:'collector',price:0,total:50,sold:0,image:'',desc:''} : products[i];
+  const p = i===null ? {id:Date.now(),name:'',artist:'',artistId:'',category:'palace',edition:'collector',price:0,total:50,sold:0,image:'',desc:''} : products[i];
   const opts = categories.map(c=>'<option value="'+c.id+'"'+(c.id===p.category?' selected':'')+'>'+esc(c.nameZh+' · '+c.name)+'</option>').join('');
   $('modalTitle').textContent = i===null ? '新增作品' : '編輯作品';
   $('modalBody').innerHTML = ''
     + '<div class="row2"><div class="field"><label>作品名稱</label><input id="f_name" value="'+esc(p.name)+'"></div>'
-    + '<div class="field"><label>藝術家</label><input id="f_artist" value="'+esc(p.artist)+'"></div></div>'
+    + '<div class="field"><label>藝術家（選既有，或留「自訂」手填）</label><select id="f_artist_id">'
+    + '<option value=""'+(p.artistId?'':' selected')+'>（自訂／未歸戶）</option>'
+    + artists.map(a=>'<option value="'+esc(a.id)+'"'+(a.id===p.artistId?' selected':'')+'>'+esc(a.name)+(a.region?' — '+esc(a.region):'')+'</option>').join('')
+    + '</select></div>'
+    + '<div class="field"><label>顯示名稱</label><input id="f_artist" value="'+esc(p.artist)+'"></div></div>'
     + '<div class="row2"><div class="field"><label>分類</label><select id="f_category">'+opts+'</select></div>'
     + '<div class="field"><label>版本</label><select id="f_edition">'
     + Object.keys(edLabel).map(k=>'<option value="'+k+'"'+(k===p.edition?' selected':'')+'>'+edLabel[k]+'</option>').join('')
@@ -350,6 +371,12 @@ function editProduct(i){
     + '</select></div>'
     + '<div class="field"><label>作品介紹</label><textarea id="f_desc">'+esc(p.desc)+'</textarea></div>';
 
+  const aidSel = $('f_artist_id');
+  if (aidSel) aidSel.onchange = e => {
+    const a = artists.find(x => x.id === e.target.value);
+    if (a && $('f_artist')) $('f_artist').value = a.name;
+  };
+
   $('f_file').onchange = async e => {
     const file = e.target.files[0]; if(!file) return;
     const reader = new FileReader();
@@ -370,6 +397,7 @@ function editProduct(i){
   $('modalSave').onclick = () => {
     const item = {
       id: p.id, name: $('f_name').value.trim(), artist: $('f_artist').value.trim(),
+      artistId: ($('f_artist_id') ? $('f_artist_id').value : '') || null,
       category: $('f_category').value, edition: $('f_edition').value,
       price: Number($('f_price').value)||0, total: Number($('f_total').value)||0,
       sold: Number($('f_sold').value)||0, image: $('f_image').value.trim(), desc: $('f_desc').value.trim(),
@@ -552,6 +580,112 @@ function testPayPalHandle(){
   const url = 'https://paypal.me/' + h + '/1';
   window.open(url, '_blank');
   $('paypalHandleStatus').innerHTML = '已開啟測試連結：<a href="'+esc(url)+'" target="_blank" style="color:var(--red)">'+esc(url)+'</a><br>如果看到 PayPal 頁面（有金額 USD 1）= 短網址有效。';
+}
+
+
+// ===== Artist Management =====
+function artistInitials(name){
+  const n = (name||'?').trim();
+  const parts = n.split(/\s+/).filter(Boolean);
+  if(parts.length >= 2) return (parts[0][0] + parts[parts.length-1][0]).toUpperCase();
+  return n.slice(0,2).toUpperCase();
+}
+function artistWorkCount(id){ return products.filter(p => p.artistId === id).length; }
+
+function renderArtists(){
+  const el = $('artistsTable');
+  if(!el) return;
+  if(!artists.length){ el.innerHTML = '<div class="empty-state">還沒有藝術家，點右上角「新增藝術家」開始</div>'; return; }
+  let h2 = '<table><thead><tr><th></th><th>藝術家</th><th>地區</th><th>分潤階級</th><th class="num">作品</th><th>狀態</th><th></th></tr></thead><tbody>';
+  artists.forEach((a,i)=>{
+    const tier = (settings.royaltyTiers||[]).find(t=>t.id===a.royaltyTierId);
+    const n = artistWorkCount(a.id);
+    h2 += '<tr>'
+      + '<td><div class="artist-av">' + (a.avatar ? '<img src="/'+esc(a.avatar)+'">' : artistInitials(a.name)) + '</div></td>'
+      + '<td><div class="name">'+esc(a.name)+'</div><div class="sub">'+esc(a.id)+'</div></td>'
+      + '<td><span class="sub">'+esc(a.region||'—')+'</span></td>'
+      + '<td>'+(tier ? '<span class="artist-tier">'+esc(tier.label.split(' · ')[1]||tier.label)+'</span>' : '<span class="sub">—</span>')+'</td>'
+      + '<td class="num">'+n+'</td>'
+      + '<td>'+(a.enabled===false?'<span class="sold-out">已隱藏</span>':'<span class="in-stock">顯示中</span>')+'</td>'
+      + '<td><div class="actions"><button class="btn ghost small" onclick="editArtist('+i+')">編輯</button>'
+      + '<button class="btn danger small" onclick="delArtist('+i+')">刪除</button></div></td></tr>';
+  });
+  el.innerHTML = h2 + '</tbody></table>';
+}
+
+function editArtist(i){
+  const a = i===null ? {id:'',name:'',nameZh:'',avatar:'',region:'',bio:'',joinedYear:new Date().getFullYear(),royaltyTierId:'',instagram:'',website:'',enabled:true} : artists[i];
+  const tierOpts = '<option value="">（無）</option>' + (settings.royaltyTiers||[]).map(t=>
+    '<option value="'+esc(t.id)+'"'+(t.id===a.royaltyTierId?' selected':'')+'>'+esc(t.label)+'</option>').join('');
+  $('modalTitle').textContent = i===null ? '新增藝術家' : '編輯藝術家';
+  $('modalBody').innerHTML = ''
+    + '<div class="row2"><div class="field"><label>顯示名稱（英文）</label><input id="a_name" value="'+esc(a.name)+'"></div>'
+    + '<div class="field"><label>中文名稱（可留空）</label><input id="a_nameZh" value="'+esc(a.nameZh||'')+'"></div></div>'
+    + '<div class="row2"><div class="field"><label>ID（網址用，限英數與連字號）</label><input id="a_id" value="'+esc(a.id)+'" placeholder="例如 k-tanaka"></div>'
+    + '<div class="field"><label>地區</label><input id="a_region" value="'+esc(a.region||'')+'" placeholder="例如 Tokyo, Japan"></div></div>'
+    + '<div class="row2"><div class="field"><label>加入年份</label><input id="a_year" type="number" value="'+(a.joinedYear||new Date().getFullYear())+'"></div>'
+    + '<div class="field"><label>分潤階級</label><select id="a_tier">'+tierOpts+'</select></div></div>'
+    + '<div class="field"><label>頭像圖片</label><div class="img-row">'
+    + '<img class="img-preview'+(a.avatar?'':' none')+'" id="a_prev" src="'+(a.avatar? '/'+esc(a.avatar) : '')+'" '+(a.avatar?'':'data-empty="1"')+'>'
+    + '<div class="img-actions"><input id="a_avatar" value="'+esc(a.avatar||'')+'" placeholder="圖片路徑，或按下面的按鈕上傳">'
+    + '<input type="file" id="a_file" accept="image/*" style="font-size:12px">'
+    + '<span class="sub">留空則用名字字首當頭像</span></div></div></div>'
+    + '<div class="row2"><div class="field"><label>Instagram（可留空）</label><input id="a_ig" value="'+esc(a.instagram||'')+'" placeholder="https://instagram.com/..."></div>'
+    + '<div class="field"><label>個人網站（可留空）</label><input id="a_web" value="'+esc(a.website||'')+'" placeholder="https://..."></div></div>'
+    + '<div class="field"><label>簡介（前台藝術家專頁顯示）</label><textarea id="a_bio">'+esc(a.bio||'')+'</textarea></div>'
+    + '<div class="field"><label>前台顯示</label><select id="a_enabled">'
+    + '<option value="1"'+(a.enabled!==false?' selected':'')+'>顯示</option>'
+    + '<option value="0"'+(a.enabled===false?' selected':'')+'>隱藏</option></select></div>';
+
+  $('a_file').onchange = async e => {
+    const file = e.target.files[0]; if(!file) return;
+    const reader = new FileReader();
+    reader.onload = async ev => {
+      const r = await api('/api/upload',{method:'POST',body:JSON.stringify({dataUrl:ev.target.result, name:file.name.replace(/\.[^.]+$/,'')})});
+      if(r.ok){ $('a_avatar').value = r.path; $('a_prev').src='/'+r.path; $('a_prev').classList.remove('none'); toast('圖片已上傳'); }
+      else toast('上傳失敗');
+    };
+    reader.readAsDataURL(file);
+  };
+  $('a_avatar').oninput = e => {
+    const v = e.target.value, img = $('a_prev');
+    if(v){ img.src = v.startsWith('http') ? v : '/'+v; img.classList.remove('none'); }
+    else { img.removeAttribute('src'); img.classList.add('none'); }
+  };
+
+  $('modalSave').onclick = () => {
+    const name = $('a_name').value.trim();
+    let aid = $('a_id').value.trim();
+    if(!name){ toast('請填顯示名稱'); return; }
+    if(!aid) aid = name.toLowerCase().replace(/[^a-z0-9]+/g,'-').replace(/^-|-$/g,'');
+    if(i!==null && aid !== artists[i].id && artists.some(x=>x.id===aid)){ toast('ID「'+aid+'」已被使用'); return; }
+    if(i===null && artists.some(x=>x.id===aid)){ toast('ID「'+aid+'」已被使用'); return; }
+    const item = {
+      id: aid, name: name, nameZh: $('a_nameZh').value.trim() || null,
+      avatar: $('a_avatar').value.trim() || null,
+      region: $('a_region').value.trim() || null,
+      bio: $('a_bio').value.trim() || null,
+      joinedYear: Number($('a_year').value) || new Date().getFullYear(),
+      royaltyTierId: $('a_tier').value || null,
+      instagram: $('a_ig').value.trim() || null,
+      website: $('a_web').value.trim() || null,
+      enabled: $('a_enabled').value === '1'
+    };
+    if(i===null) artists.push(item); else artists[i] = item;
+    renderArtists(); save('artists'); closeModal();
+  };
+  $('modal').classList.add('open');
+}
+
+function delArtist(i){
+  const n = artistWorkCount(artists[i].id);
+  const msg = n ? '「'+artists[i].name+'」名下還有 '+n+' 件作品。刪除後這些作品會變成未歸戶（前台仍顯示，但點名字不會跳頁）。確定刪除？'
+                : '確定刪除「'+artists[i].name+'」？';
+  if(!confirm(msg)) return;
+  const aid = artists[i].id;
+  products.forEach(p => { if(p.artistId === aid) p.artistId = null; });
+  artists.splice(i,1);
+  renderArtists(); save('artists'); save('products');
 }
 </script>
 </body>

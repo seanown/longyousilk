@@ -464,6 +464,116 @@ img { display: block; max-width: 100%; }
 }
 .detail-royalty strong { color: var(--gold-dark); font-weight: 700; }
 
+/* ===== Artist Page ===== */
+.artist-link {
+  color: var(--ink-soft); cursor: pointer;
+  border-bottom: 1px solid transparent; transition: all 0.2s;
+}
+.artist-link:hover { color: var(--gold-dark); border-bottom-color: var(--gold); }
+
+.artist-page-hero { background: var(--ivory-deep); padding: 56px 0; border-bottom: 1px solid var(--line); }
+.artist-page-hero-inner {
+  max-width: 1320px; margin: 0 auto; padding: 0 32px;
+  display: flex; gap: 32px; align-items: flex-start;
+}
+.artist-avatar {
+  width: 120px; height: 120px; flex-shrink: 0; border-radius: 50%;
+  overflow: hidden; background: var(--ink);
+  display: flex; align-items: center; justify-content: center;
+  font-family: var(--serif); font-size: 42px; font-style: italic;
+  color: var(--gold-light); border: 1px solid var(--line-gold);
+}
+.artist-avatar img { width: 100%; height: 100%; object-fit: cover; }
+.artist-page-info { flex: 1; min-width: 0; }
+.artist-page-info h2 {
+  font-family: var(--serif); font-size: 38px; font-weight: 600;
+  font-style: italic; margin-bottom: 8px;
+}
+.artist-page-region {
+  font-size: 11px; color: var(--ink-muted);
+  letter-spacing: 1.5px; margin-bottom: 16px;
+}
+.artist-page-bio {
+  font-size: 14px; color: var(--ink-soft);
+  line-height: 1.9; max-width: 700px; font-weight: 300;
+}
+.artist-page-links { display: flex; gap: 10px; margin-top: 18px; flex-wrap: wrap; }
+.artist-page-links a {
+  font-size: 11px; letter-spacing: 1px; padding: 7px 15px;
+  border: 1px solid var(--line); color: var(--ink-soft);
+  text-decoration: none; transition: all 0.2s;
+}
+.artist-page-links a:hover { border-color: var(--gold); color: var(--gold-dark); }
+
+.artist-stats {
+  display: flex; gap: 40px; margin-top: 28px;
+  padding: 22px 0; border-top: 1px solid var(--line);
+}
+.artist-stats .stat .num {
+  font-family: var(--serif); font-size: 26px; font-weight: 600;
+  font-style: italic; color: var(--ink);
+}
+.artist-stats .stat .lbl {
+  font-size: 10px; color: var(--ink-muted);
+  letter-spacing: 1.5px; margin-top: 2px;
+}
+.artist-works { max-width: 1320px; margin: 0 auto; padding: 44px 32px 80px; }
+.artist-works-head {
+  display: flex; align-items: baseline; justify-content: space-between;
+  margin-bottom: 26px; flex-wrap: wrap; gap: 12px;
+}
+.artist-works-head h3 {
+  font-family: var(--serif); font-size: 24px; font-weight: 600; font-style: italic;
+}
+.artist-works-head .count { font-size: 12px; color: var(--ink-muted); letter-spacing: 1px; }
+.artist-back {
+  display: inline-flex; align-items: center; gap: 8px;
+  font-size: 11px; letter-spacing: 1.5px; color: var(--ink-muted);
+  cursor: pointer; margin-bottom: 26px; transition: color 0.2s;
+}
+.artist-back:hover { color: var(--gold-dark); }
+.artist-empty {
+  padding: 60px 0; text-align: center;
+  font-size: 13px; color: var(--ink-muted); font-weight: 300;
+}
+
+@media (max-width: 720px) {
+  .artist-page-hero-inner { flex-direction: column; gap: 20px; }
+  .artist-avatar { width: 88px; height: 88px; font-size: 32px; }
+  .artist-page-info h2 { font-size: 28px; }
+  .artist-stats { gap: 24px; }
+}
+
+/* ===== Artists Roster (For Artists page) ===== */
+.roster-section { padding: 0 0 80px; }
+.roster-head { margin-bottom: 30px; }
+.roster-head h3 {
+  font-family: var(--serif); font-size: 28px;
+  font-weight: 600; font-style: italic; margin-bottom: 8px;
+}
+.roster-head p { font-size: 13px; color: var(--ink-muted); font-weight: 300; }
+.roster-grid {
+  display: grid; grid-template-columns: repeat(auto-fill, minmax(190px, 1fr)); gap: 20px;
+}
+.roster-card {
+  padding: 26px 18px; background: var(--white); border: 1px solid var(--line);
+  text-align: center; cursor: pointer; transition: all 0.25s;
+}
+.roster-card:hover { border-color: var(--gold); transform: translateY(-3px); }
+.roster-avatar {
+  width: 72px; height: 72px; margin: 0 auto 14px; border-radius: 50%;
+  overflow: hidden; background: var(--ink);
+  display: flex; align-items: center; justify-content: center;
+  font-family: var(--serif); font-size: 26px; font-style: italic; color: var(--gold-light);
+}
+.roster-avatar img { width: 100%; height: 100%; object-fit: cover; }
+.roster-name { font-size: 14px; font-weight: 500; margin-bottom: 4px; }
+.roster-region {
+  font-size: 11px; color: var(--ink-muted);
+  letter-spacing: 0.5px; margin-bottom: 10px;
+}
+.roster-count { font-size: 10px; color: var(--gold-dark); letter-spacing: 1px; }
+
 /* ===== Hidden (NFT 暫不啟用) ===== */
 .product-card.product-hidden { display: none !important; }
 .nft-section-hidden { display: none; }
@@ -930,6 +1040,22 @@ img { display: block; max-width: 100%; }
   </div>
 </section>
 
+<!-- ===== View: Single Artist ===== -->
+<section class="view" id="view-artist">
+  <div class="artist-page-hero">
+    <div class="artist-page-hero-inner" id="artist-hero-content"></div>
+  </div>
+  <div class="artist-works">
+    <div class="artist-back" onclick="location.hash='#shop'">&#8592; BACK TO COLLECTION</div>
+    <div class="artist-works-head">
+      <h3 id="artist-works-title">Works</h3>
+      <span class="count" id="artist-works-count"></span>
+    </div>
+    <div class="product-grid" id="artist-works-grid"></div>
+    <div class="artist-empty" id="artist-empty" style="display:none;">This artist has no public works yet.</div>
+  </div>
+</section>
+
 <!-- ===== View: Artists ===== -->
 <section class="view" id="view-artists">
   <div class="artist-hero">
@@ -943,7 +1069,7 @@ img { display: block; max-width: 100%; }
       <div class="benefit-card">
         <div class="benefit-num">01</div>
         <h4>Revenue Share</h4>
-        <p>Standard Editions: 25–30% of sales revenue. Collector's Editions: 35–40%. NFT 1/1 auctions: 8–10% royalty, split artist/platform. We cover silk material, printing, logistics, and customer service.</p>
+        <p>Three tiers, set by profile and IP rights. Tier A — headlining artists and IP holders: 30% on Standard, 40% on Collector's. Tier B — signed collaborators: 20% / 30%. Tier C — emerging artists, first listing: 7% / 15%. We cover silk material, printing, logistics, and customer service.</p>
       </div>
       <div class="benefit-card">
         <div class="benefit-num">02</div>
@@ -953,13 +1079,28 @@ img { display: block; max-width: 100%; }
       <div class="benefit-card">
         <div class="benefit-num">03</div>
         <h4>Collectible Value</h4>
-        <p>Every work is strictly limited — 25–500 pieces, numbered and certified. Sold out and retired. Your work carries long-term appreciation potential in the secondary market, with NFT royalty for the 1/1 edition.</p>
+        <p>Every work is strictly limited — 25–500 pieces, numbered and certified. Sold out and retired, never reprinted no matter the demand. Your work carries long-term appreciation potential in the secondary market.</p>
       </div>
       <div class="benefit-card">
         <div class="benefit-num">04</div>
         <h4>Creative Freedom</h4>
         <p>3-year exclusive license for silk print sales and exhibition usage. You retain full copyright of your work. No open registration — every artist goes through portfolio review to protect collection quality.</p>
       </div>
+      <div class="benefit-card">
+        <div class="benefit-num">05</div>
+        <h4>Your Own Artist Page</h4>
+        <p>Every artist gets a dedicated page — portrait, biography, region, royalty tier, and your complete catalogue in one place. Collectors who discover one piece can find everything else you have made.</p>
+      </div>
+    </div>
+  </div>
+
+  <div class="roster-section">
+    <div class="container">
+      <div class="roster-head">
+        <h3>Meet Our Artists</h3>
+        <p>Independent creators and studios from East and West. Select any name to see their full catalogue.</p>
+      </div>
+      <div class="roster-grid" id="artists-roster"></div>
     </div>
   </div>
   <div class="artist-form-section">
@@ -1151,6 +1292,9 @@ let deliveries = [];
 // ===== Data: Exhibitions =====
 let exhibitions = [];
 
+// ===== Data: Artists =====
+let artists = [];
+
 // ===== Settings (loaded from /api/data?type=settings) =====
 let settings = {};
 let currentCurrency = 'USD';
@@ -1183,6 +1327,99 @@ function royaltyLabel(p) {
   if (!tier) return '';
   const rate = p.edition === 'collector' ? tier.rateCollector : tier.rateStandard;
   return tier.label + ' · ' + rate + '%';
+}
+
+// ===== Artist helpers =====
+function getArtist(p) {
+  if (!p) return null;
+  if (p.artistId) {
+    const a = artists.find(x => x.id === p.artistId);
+    if (a) return a;
+  }
+  return artists.find(x => x.name === p.artist) || null;
+}
+function artistName(p) {
+  const a = getArtist(p);
+  return a ? a.name : (p && p.artist ? p.artist : 'LYS Studio');
+}
+function artistInitials(name) {
+  const n = (name || '?').trim();
+  const parts = n.split(/\s+/).filter(Boolean);
+  if (parts.length >= 2) return (parts[0][0] + parts[parts.length - 1][0]).toUpperCase();
+  return n.slice(0, 2).toUpperCase();
+}
+function artistWorks(artistId) {
+  return products.filter(p => (p.artistId === artistId) && p.enabled !== false);
+}
+function openArtist(id) {
+  if (!id) return;
+  location.hash = '#artist/' + id;
+  setTimeout(() => renderArtistPage(id), 50);
+}
+function renderArtistsRoster() {
+  const el = document.getElementById('artists-roster');
+  if (!el) return;
+  // 只列出有公開作品的藝術家（作品被隱藏時，例如 NFT 暫停，該藝術家自動不出現）
+  const list = artists.filter(a => artistWorks(a.id).length > 0);
+  el.innerHTML = list.map(a => {
+    const n = artistWorks(a.id).length;
+    const avatar = a.avatar
+      ? '<img src="' + a.avatar + '" alt="' + a.name + '">'
+      : artistInitials(a.name);
+    return '<div class="roster-card" onclick="openArtist(\'' + a.id + '\')">' +
+      '<div class="roster-avatar">' + avatar + '</div>' +
+      '<div class="roster-name">' + a.name + '</div>' +
+      '<div class="roster-region">' + (a.region || '') + '</div>' +
+      '<div class="roster-count">' + n + (n === 1 ? ' WORK' : ' WORKS') + '</div>' +
+    '</div>';
+  }).join('');
+}
+function renderArtistPage(id) {
+  const aid = id || (location.hash.split('/')[1] || '').trim();
+  const a = artists.find(x => x.id === aid);
+  const heroEl = document.getElementById('artist-hero-content');
+  if (!a) {
+    if (heroEl) heroEl.innerHTML = '<div class="artist-empty">Artist not found.</div>';
+    return;
+  }
+  const works = artistWorks(a.id);
+  const totalEdition = works.reduce((s, w) => s + (w.total || 0), 0);
+  const tier = (settings.royaltyTiers || []).find(t => t.id === a.royaltyTierId) || null;
+  const avatarInner = a.avatar
+    ? '<img src="' + a.avatar + '" alt="' + a.name + '">'
+    : artistInitials(a.name);
+
+  if (heroEl) {
+    heroEl.innerHTML =
+      '<div class="artist-avatar">' + avatarInner + '</div>' +
+      '<div class="artist-page-info">' +
+        '<h2>' + a.name + '</h2>' +
+        (a.region ? '<div class="artist-page-region">' + a.region + ' · Joined ' + (a.joinedYear || '—') + '</div>' : '') +
+        (a.bio ? '<p class="artist-page-bio">' + a.bio + '</p>' : '') +
+        '<div class="artist-page-links">' +
+          (a.instagram ? '<a href="' + a.instagram + '" target="_blank" rel="noopener">Instagram</a>' : '') +
+          (a.website ? '<a href="' + a.website + '" target="_blank" rel="noopener">Website</a>' : '') +
+          '<a href="mailto:seanown@gmail.com?subject=' + encodeURIComponent('Enquiry about ' + a.name) + '">Contact</a>' +
+        '</div>' +
+        '<div class="artist-stats">' +
+          '<div class="stat"><div class="num">' + works.length + '</div><div class="lbl">WORKS</div></div>' +
+          '<div class="stat"><div class="num">' + totalEdition + '</div><div class="lbl">TOTAL EDITION</div></div>' +
+          '<div class="stat"><div class="num">' + (tier ? tier.rateStandard + '–' + tier.rateCollector + '%' : '—') + '</div><div class="lbl">ROYALTY</div></div>' +
+        '</div>' +
+      '</div>';
+  }
+
+  const titleEl = document.getElementById('artist-works-title');
+  if (titleEl) titleEl.textContent = 'Works by ' + a.name;
+  const countEl = document.getElementById('artist-works-count');
+  if (countEl) countEl.textContent = works.length + (works.length === 1 ? ' PIECE' : ' PIECES');
+
+  const grid = document.getElementById('artist-works-grid');
+  const emptyEl = document.getElementById('artist-empty');
+  if (emptyEl) emptyEl.style.display = works.length ? 'none' : 'block';
+  if (grid) {
+    grid.innerHTML = works.map(productCard).join('');
+  }
 }
 function paypalReady(p, size) {
   const links = (p && p.paypalLinks) || {};
@@ -1240,7 +1477,7 @@ function productCard(p) {
     </div>
     <div class="product-info">
       <div class="product-name">${p.name}</div>
-      <div class="product-artist">by ${p.artist}</div>
+      <div class="product-artist">by ${p.artistId ? `<span class="artist-link" onclick="event.stopPropagation(); openArtist('${p.artistId}')">${artistName(p)}</span>` : artistName(p)}</div>
       ${royalty ? `<div style="margin-bottom:8px;"><span class="royalty-tag">${royalty.label.split(' · ')[1] || royalty.label} · ${p.edition==='collector' ? royalty.rateCollector : royalty.rateStandard}%</span></div>` : ''}
       <div class="product-meta">
         <span class="product-edition">Ed. ${p.total} · ${p.sold}/${p.total}</span>
@@ -1323,7 +1560,7 @@ function renderProductDetail() {
     <div class="detail-info">
       <span class="detail-cat-badge">${cat.nameZh} · ${cat.name}</span>
       <h2>${p.name}</h2>
-      <div class="detail-artist">by ${p.artist} <span class="dot"></span> Edition of ${p.total} <span class="dot"></span> ${p.total - p.sold} remaining</div>
+      <div class="detail-artist">by ${p.artistId ? `<span class="artist-link" onclick="openArtist('${p.artistId}')">${artistName(p)}</span>` : artistName(p)} <span class="dot"></span> Edition of ${p.total} <span class="dot"></span> ${p.total - p.sold} remaining</div>
       ${royalty ? `<div class="detail-royalty">Artist Royalty · <strong>${royaltyRate}%</strong> · ${royalty.label.split(' · ')[1] || royalty.label}</div>` : ''}
       <div class="detail-price-row">
         <span class="detail-price" data-usd="${p.price}">${formatPrice(p.price)}</span>
@@ -1439,11 +1676,14 @@ function renderExhibitions(tab) {
 // ===== Router =====
 function router() {
   const hash = location.hash.slice(1) || 'home';
-  const route = hash.split('/')[0];
+  const parts = hash.split('/');
+  const route = parts[0];
+  const param = parts[1] ? decodeURIComponent(parts[1]) : null;
   document.querySelectorAll('.view').forEach(v => v.classList.remove('active'));
   document.querySelectorAll('.nav-links a').forEach(a => a.classList.toggle('active', a.dataset.route === route));
   const view = document.getElementById('view-' + route);
   if (view) view.classList.add('active');
+  if (route === 'artist' && param) renderArtistPage(param);
   window.scrollTo(0, 0);
   document.getElementById('navLinks').classList.remove('open');
 }
@@ -1511,16 +1751,18 @@ document.querySelectorAll('#ex-tabs .ex-tab').forEach(tab => {
 
 async function boot() {
   try {
-    const [p, c, e, s] = await Promise.all([
+    const [p, c, e, s, ar] = await Promise.all([
       fetch('/api/data?type=products').then(r => r.json()),
       fetch('/api/data?type=categories').then(r => r.json()),
       fetch('/api/data?type=exhibitions').then(r => r.json()),
-      fetch('/api/data?type=settings').then(r => r.json())
+      fetch('/api/data?type=settings').then(r => r.json()),
+      fetch('/api/data?type=artists').then(r => r.json())
     ]);
     products    = p.data || [];
     categories  = c.data || [];
     exhibitions = e.data || [];
     settings    = s.data || {};
+    artists     = (ar && ar.data) ? ar.data.filter(a => a.enabled !== false) : [];
     if (settings.sizes && settings.sizes.length) sizes = settings.sizes;
     if (settings.deliveries && settings.deliveries.length) deliveries = settings.deliveries;
     if (settings.dropEndsAt) DROP_END = new Date(settings.dropEndsAt);
@@ -1535,6 +1777,7 @@ async function boot() {
   renderShopCats();
   renderProducts('shop-products', products);
   renderExhibitions('current');
+  renderArtistsRoster();
   updateCountdown();
   setInterval(updateCountdown, 1000);
   router();

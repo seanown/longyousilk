@@ -64,7 +64,7 @@ function readBody(req, limitBytes) {
 }
 
 // 只允許這幾個檔名，避免被寫入奇怪的路徑
-const ALLOWED_DATA = new Set(['products', 'exhibitions', 'categories', 'settings', 'applications']);
+const ALLOWED_DATA = new Set(['products', 'exhibitions', 'categories', 'settings', 'applications', 'artists']);
 
 function dataFile(type) {
   return path.join(DATA_DIR, type + '.json');
