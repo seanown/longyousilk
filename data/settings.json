@@ -19,5 +19,31 @@
     { "id": "collector", "label": "Collector's", "desc": "25–100 pieces, hand-embroidered numbering, certificate of authenticity." },
     { "id": "standard", "label": "Standard", "desc": "500 pieces per work, numbered and certified." },
     { "id": "nft", "label": "NFT 1/1", "desc": "Single edition, blockchain-verified provenance, auctioned separately." }
-  ]
+  ],
+  "currencies": [
+    { "code": "USD", "symbol": "$",   "rate": 1.00,  "label": "US Dollar" },
+    { "code": "MOP", "symbol": "MOP$","rate": 8.05,  "label": "澳門元" },
+    { "code": "HKD", "symbol": "HK$", "rate": 7.80,  "label": "港幣" },
+    { "code": "NTD", "symbol": "NT$", "rate": 31.50, "label": "新台幣" }
+  ],
+  "defaultCurrency": "USD",
+  "paymentMethods": {
+    "stripe": {
+      "enabled": true,
+      "merchantName": "Long You Silk",
+      "note": "到 Stripe Dashboard 建立 Payment Links，把連結填入 products[].stripeLinks"
+    }
+  },
+  "royaltyTiers": [
+    { "id": "tier-a", "label": "Tier A · Headlining Artist / IP Rights Holder", "rateStandard": 30, "rateCollector": 40, "appliesTo": ["collector", "standard"] },
+    { "id": "tier-b", "label": "Tier B · Signed Artist / Recurring Collaborator", "rateStandard": 20, "rateCollector": 30, "appliesTo": ["collector", "standard"] },
+    { "id": "tier-c", "label": "Tier C · Emerging Artist / First-time Listed", "rateStandard": 7,  "rateCollector": 15, "appliesTo": ["collector", "standard"] }
+  ],
+  "paymentButtons": {
+    "small": { "label": "Pay",            "style": "btn-pay-small",   "uses": "list",   "note": "列表 / 收藏牆用，細框線" },
+    "medium":{ "label": "Buy Now",        "style": "btn-add-cart",    "uses": "detail", "note": "商品詳情用，主 CTA 紅實心" },
+    "large": { "label": "Reserve Edition","style": "btn-reserve",     "uses": "hero",   "note": "限量 / 倒數區用，金色壓迫感" }
+  },
+  "showNftEdition": false,
+  "nftHiddenNote": "NFT 1/1 功能暫不啟用（依軒哥 2026-09-05 決定）。第 12 號 The Godfather — Silk Cut 已從前台隱藏，未來重新啟用時把 settings.showNftEdition 改回 true 並改商品 enabled 為 true。"
 }

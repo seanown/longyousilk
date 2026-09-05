@@ -379,12 +379,94 @@ img { display: block; max-width: 100%; }
   transition: all 0.25s; margin-bottom: 12px; text-transform: uppercase;
 }
 .btn-add-cart:hover { background: var(--red-deep); }
+.btn-add-cart[data-stripe-ready="true"]:hover { background: var(--red-deep); transform: translateY(-1px); box-shadow: 0 6px 20px rgba(160,32,32,0.25); }
+.btn-add-cart[data-stripe-ready="false"] { background: var(--ink-soft); }
+.btn-add-cart[data-stripe-ready="false"]:hover { background: var(--ink); }
 .btn-waitlist {
   width: 100%; padding: 18px; border: 1px solid var(--red);
   color: var(--red); font-size: 13px; font-weight: 600;
   letter-spacing: 2px; transition: all 0.25s; text-transform: uppercase;
 }
 .btn-waitlist:hover { background: var(--red); color: var(--white); }
+
+/* ===== Payment Buttons — Three Sizes ===== */
+.btn-pay-small {
+  display: inline-flex; align-items: center; gap: 6px;
+  padding: 7px 14px; border: 1px solid var(--line-gold);
+  background: transparent; color: var(--ink-soft);
+  font-size: 11px; font-weight: 600; letter-spacing: 1.5px;
+  text-transform: uppercase; transition: all 0.25s;
+  cursor: pointer;
+}
+.btn-pay-small:hover { border-color: var(--gold); color: var(--gold-dark); }
+.btn-pay-small[data-stripe-ready="false"] { opacity: 0.4; cursor: not-allowed; }
+
+.btn-reserve {
+  width: 100%; padding: 22px; margin-bottom: 12px;
+  background: linear-gradient(135deg, var(--ink) 0%, #2a2a2a 100%);
+  color: var(--gold-light); border: 1px solid var(--gold);
+  font-family: var(--serif); font-size: 18px; font-weight: 600;
+  font-style: italic; letter-spacing: 2px;
+  transition: all 0.3s; text-transform: none;
+  position: relative; overflow: hidden;
+}
+.btn-reserve::before {
+  content: ''; position: absolute; inset: 0;
+  background: linear-gradient(135deg, var(--gold-dark) 0%, var(--gold) 100%);
+  opacity: 0; transition: opacity 0.3s;
+}
+.btn-reserve:hover::before { opacity: 1; }
+.btn-reserve:hover { color: var(--ink); border-color: var(--gold-light); transform: translateY(-1px); box-shadow: 0 10px 30px rgba(201,169,110,0.3); }
+.btn-reserve span { position: relative; z-index: 1; }
+.btn-reserve[data-stripe-ready="false"] {
+  background: transparent; border-color: var(--line);
+  color: var(--ink-muted); cursor: not-allowed;
+}
+.btn-reserve[data-stripe-ready="false"]:hover { transform: none; box-shadow: none; }
+.btn-reserve[data-stripe-ready="false"]::before { display: none; }
+
+.btn-stack { display: flex; flex-direction: column; gap: 12px; margin-bottom: 12px; }
+.btn-stack-row { display: flex; gap: 10px; align-items: center; }
+
+/* ===== Currency Switcher ===== */
+.currency-switcher {
+  display: inline-flex; align-items: center; gap: 6px;
+  font-size: 11px; font-weight: 600; letter-spacing: 1px;
+  color: var(--ink-soft);
+}
+.currency-switcher .label { font-size: 10px; color: var(--ink-muted); margin-right: 4px; }
+.currency-pill {
+  padding: 4px 10px; border: 1px solid var(--line); border-radius: 0;
+  background: transparent; color: var(--ink-soft);
+  font-size: 10px; font-weight: 600; letter-spacing: 1px;
+  cursor: pointer; transition: all 0.2s;
+}
+.currency-pill:hover { border-color: var(--gold); color: var(--gold-dark); }
+.currency-pill.active { background: var(--ink); color: var(--gold-light); border-color: var(--ink); }
+
+/* ===== Royalty Tag ===== */
+.royalty-tag {
+  display: inline-flex; align-items: center; gap: 4px;
+  padding: 2px 8px; background: var(--gold-soft);
+  color: var(--gold-dark); font-size: 10px;
+  font-weight: 600; letter-spacing: 0.5px;
+  border: 1px solid var(--line-gold);
+}
+.royalty-tag::before {
+  content: '✦'; color: var(--gold);
+}
+.detail-royalty {
+  display: inline-block; margin-top: 8px;
+  padding: 6px 12px; background: var(--ivory);
+  border-left: 2px solid var(--gold);
+  font-size: 11px; color: var(--ink-soft);
+  letter-spacing: 0.5px;
+}
+.detail-royalty strong { color: var(--gold-dark); font-weight: 700; }
+
+/* ===== Hidden (NFT 暫不啟用) ===== */
+.product-card.product-hidden { display: none !important; }
+.nft-section-hidden { display: none; }
 
 /* NFT Box */
 .nft-box {
@@ -684,6 +766,10 @@ img { display: block; max-width: 100%; }
       <a href="#exhibition" data-route="exhibition">Exhibitions</a>
       <a href="#artists" data-route="artists">For Artists</a>
       <a href="#about" data-route="about">About</a>
+    </div>
+    <div class="currency-switcher" id="currencySwitcher" aria-label="Currency">
+      <span class="label">Currency</span>
+      <!-- pills 將由 JS 從 settings.currencies 注入 -->
     </div>
     <button class="nav-cta" onclick="location.hash='#shop'">Shop Now</button>
     <button class="hamburger" id="hamburger" onclick="toggleNav()"><span></span><span></span><span></span></button>
@@ -1065,6 +1151,10 @@ let deliveries = [];
 // ===== Data: Exhibitions =====
 let exhibitions = [];
 
+// ===== Settings (loaded from /api/data?type=settings) =====
+let settings = {};
+let currentCurrency = 'USD';
+
 let DROP_END = null;
 
 // ===== State =====
@@ -1073,6 +1163,35 @@ let currentCat = 'all';
 let currentProduct = null;
 let selectedSize = 'a2';
 let selectedDelivery = 'print';
+
+// ===== Helpers: Currency & Royalty =====
+function activeCurrency() {
+  const list = settings.currencies || [];
+  return list.find(c => c.code === currentCurrency) || list[0] || { code: 'USD', symbol: '$', rate: 1 };
+}
+function formatPrice(usd) {
+  const cur = activeCurrency();
+  const converted = Math.round(usd * (cur.rate || 1));
+  return cur.symbol + converted.toLocaleString('en-US');
+}
+function getRoyalty(p) {
+  if (!p || !p.royaltyTierId) return null;
+  return (settings.royaltyTiers || []).find(t => t.id === p.royaltyTierId) || null;
+}
+function royaltyLabel(p) {
+  const tier = getRoyalty(p);
+  if (!tier) return '';
+  const rate = p.edition === 'collector' ? tier.rateCollector : tier.rateStandard;
+  return tier.label + ' · ' + rate + '%';
+}
+function stripeReady(p, size) {
+  const links = (p && p.stripeLinks) || {};
+  return !!links[size];
+}
+function stripeOrContact(p, size) {
+  const links = (p && p.stripeLinks) || {};
+  return links[size] || ('mailto:' + (settings.paymentMethods && settings.paymentMethods.stripe ? settings.paymentMethods.stripe.merchantName : 'seanown@gmail.com').toLowerCase().replace(/\s+/g, '') + '@gmail.com?subject=Reserved%20' + encodeURIComponent(p.name));
+}
 
 // ===== Render: Categories =====
 function renderCategories(container) {
@@ -1109,6 +1228,9 @@ function productCard(p) {
   const soldOut = p.sold >= p.total;
   const badgeClass = p.edition === 'nft' ? 'badge-nft' : p.edition === 'collector' ? 'badge-collector' : 'badge-standard';
   const badgeText = p.edition === 'nft' ? 'NFT 1/1' : p.edition === 'collector' ? "Collector's" : 'Standard';
+  const royalty = getRoyalty(p);
+  const payReady = stripeReady(p, 'small');
+  const payHref = stripeOrContact(p, 'small');
   return `<div class="product-card" onclick="openProduct(${p.id})">
     <div class="product-img-wrap">
       <span class="product-badge ${badgeClass}">${badgeText}</span>
@@ -1119,10 +1241,15 @@ function productCard(p) {
     <div class="product-info">
       <div class="product-name">${p.name}</div>
       <div class="product-artist">by ${p.artist}</div>
+      ${royalty ? `<div style="margin-bottom:8px;"><span class="royalty-tag">${royalty.label.split(' · ')[1] || royalty.label} · ${p.edition==='collector' ? royalty.rateCollector : royalty.rateStandard}%</span></div>` : ''}
       <div class="product-meta">
         <span class="product-edition">Ed. ${p.total} · ${p.sold}/${p.total}</span>
-        <span class="product-price">$${p.price}</span>
+        <span class="product-price">${formatPrice(p.price)}</span>
       </div>
+      ${soldOut ? '' : `<div style="margin-top:10px;display:flex;gap:8px;align-items:center;">
+        <button class="btn-pay-small" data-stripe-ready="${payReady}" onclick="event.stopPropagation();window.open('${payHref}','_blank');">Pay</button>
+        <span style="font-size:10px;color:var(--ink-muted);letter-spacing:0.5px;">Stripe · ${activeCurrency().code}</span>
+      </div>`}
     </div>
   </div>`;
 }
@@ -1176,6 +1303,13 @@ function renderProductDetail() {
   const size = sizes.find(s => s.id === selectedSize);
   const del = deliveries.find(d => d.id === selectedDelivery);
   const total = p.price + size.priceAdd + del.price;
+  const royalty = getRoyalty(p);
+  const royaltyRate = royalty ? (p.edition === 'collector' ? royalty.rateCollector : royalty.rateStandard) : null;
+  const cur = activeCurrency();
+  const buyReady = stripeReady(p, 'medium');
+  const reserveReady = stripeReady(p, 'large');
+  const buyHref = stripeOrContact(p, 'medium');
+  const reserveHref = stripeOrContact(p, 'large');
 
   let html = `<div class="detail-layout">
     <div class="detail-gallery">
@@ -1190,9 +1324,10 @@ function renderProductDetail() {
       <span class="detail-cat-badge">${cat.nameZh} · ${cat.name}</span>
       <h2>${p.name}</h2>
       <div class="detail-artist">by ${p.artist} <span class="dot"></span> Edition of ${p.total} <span class="dot"></span> ${p.total - p.sold} remaining</div>
+      ${royalty ? `<div class="detail-royalty">Artist Royalty · <strong>${royaltyRate}%</strong> · ${royalty.label.split(' · ')[1] || royalty.label}</div>` : ''}
       <div class="detail-price-row">
-        <span class="detail-price">$${p.price}</span>
-        <span class="detail-price-note">Starting price · Size and delivery options below</span>
+        <span class="detail-price" data-usd="${p.price}">${formatPrice(p.price)}</span>
+        <span class="detail-price-note">Starting price · Size and delivery options below · ${cur.code}</span>
       </div>
 
       <div class="option-group">
@@ -1201,7 +1336,7 @@ function renderProductDetail() {
           ${sizes.map(s => `<div class="size-opt ${selectedSize===s.id?'active':''}" onclick="selectSize('${s.id}')">
             <div class="size-name">${s.name}</div>
             <div class="size-dim">${s.dim}</div>
-            <div class="size-price">${s.priceAdd > 0 ? '+$' + s.priceAdd : 'Included'}</div>
+            <div class="size-price" data-usd-add="${s.priceAdd}">${s.priceAdd > 0 ? '+' + formatPrice(s.priceAdd) : 'Included'}</div>
           </div>`).join('')}
         </div>
       </div>
@@ -1211,19 +1346,25 @@ function renderProductDetail() {
         <div class="delivery-options">
           ${deliveries.map(d => `<div class="delivery-opt ${selectedDelivery===d.id?'active':''}" onclick="selectDelivery('${d.id}')">
             <div><div class="del-name">${d.name}</div><div class="del-desc">${d.desc}</div></div>
-            <div class="del-price">${d.price > 0 ? '+$' + d.price : 'Free'}</div>
+            <div class="del-price" data-usd-add="${d.price}">${d.price > 0 ? '+' + formatPrice(d.price) : 'Free'}</div>
           </div>`).join('')}
         </div>
       </div>
 
       <div class="detail-total">
-        <span class="total-label">Total</span>
-        <span class="total-value">$${total}</span>
+        <span class="total-label">Total (${cur.code})</span>
+        <span class="total-value">${formatPrice(total)}</span>
       </div>
 
-      ${soldOut ? `<button class="btn-waitlist">Join Waitlist for Next Drop</button>` : `<button class="btn-add-cart" onclick="showToast('Added to cart — ${p.name}')">Add to Cart</button>`}
+      ${soldOut ? `<button class="btn-waitlist">Join Waitlist for Next Drop</button>` : `
+        <div class="btn-stack">
+          <button class="btn-reserve" data-stripe-ready="${reserveReady}" onclick="window.open('${reserveHref}','_blank')"><span>Reserve Your Edition</span></button>
+          <button class="btn-add-cart" data-stripe-ready="${buyReady}" onclick="window.open('${buyHref}','_blank')">Buy Now · Stripe</button>
+        </div>
+        <div style="font-size:11px;color:var(--ink-muted);text-align:center;letter-spacing:0.5px;margin-bottom:16px;">Payment via Stripe · ${cur.code} · Secure checkout</div>
+      `}
 
-      ${p.edition === 'nft' ? `<div class="nft-box">
+      ${p.edition === 'nft' && settings.showNftEdition ? `<div class="nft-box">
         <h4>NFT 1/1 Edition <span class="nft-tag">Blockchain Verified</span></h4>
         <p>This is the unique 1-of-1 NFT edition of this work. Includes the physical silk print + a blockchain-verified digital token with 8–10% royalty for secondary sales. Auctioned separately to the highest bidder.</p>
         <div class="nft-meta"><span>1 of 1</span><span>Smart Contract Verified</span><span>8–10% Royalty</span></div>
@@ -1252,6 +1393,26 @@ function renderProductDetail() {
 
 function selectSize(id) { selectedSize = id; renderProductDetail(); }
 function selectDelivery(id) { selectedDelivery = id; renderProductDetail(); }
+
+// ===== Currency Switcher =====
+function renderCurrencySwitcher() {
+  const list = settings.currencies || [];
+  if (!list.length) return;
+  currentCurrency = settings.defaultCurrency || 'USD';
+  const wrap = document.getElementById('currencySwitcher');
+  if (!wrap) return;
+  wrap.innerHTML = '<span class="label">Currency</span>' + list.map(c =>
+    `<button class="currency-pill ${c.code===currentCurrency?'active':''}" onclick="setCurrency('${c.code}')">${c.code}</button>`
+  ).join('');
+}
+function setCurrency(code) {
+  currentCurrency = code;
+  document.querySelectorAll('.currency-pill').forEach(b => b.classList.toggle('active', b.textContent === code));
+  // 重繪所有價格相關視圖
+  renderProducts('home-products', products.filter(p => p.enabled !== false).slice(0, 4));
+  renderProducts('shop-products', getFilteredProducts());
+  if (currentProduct) renderProductDetail();
+}
 
 // ===== Exhibitions =====
 function renderExhibitions(tab) {
@@ -1359,13 +1520,16 @@ async function boot() {
     products    = p.data || [];
     categories  = c.data || [];
     exhibitions = e.data || [];
-    const st = s.data || {};
-    if (st.sizes && st.sizes.length) sizes = st.sizes;
-    if (st.deliveries && st.deliveries.length) deliveries = st.deliveries;
-    if (st.dropEndsAt) DROP_END = new Date(st.dropEndsAt);
+    settings    = s.data || {};
+    if (settings.sizes && settings.sizes.length) sizes = settings.sizes;
+    if (settings.deliveries && settings.deliveries.length) deliveries = settings.deliveries;
+    if (settings.dropEndsAt) DROP_END = new Date(settings.dropEndsAt);
+    // 過濾掉 enabled === false 的商品（NFT 暫不啟用時）
+    products = products.filter(p => p.enabled !== false);
   } catch (err) {
     console.error('載入資料失敗', err);
   }
+  renderCurrencySwitcher();
   renderCategories('home-categories');
   renderProducts('home-products', products.slice(0, 4));
   renderShopCats();
