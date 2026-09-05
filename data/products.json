@@ -12,7 +12,11 @@
     "desc": "A cyberpunk vision of Kowloon Walled City — neon signs, rain-slicked streets, and Eastern architecture fused with futuristic tech. Part of the Cyber Orient collection.",
     "enabled": true,
     "royaltyTierId": "tier-a",
-    "stripeLinks": { "small": null, "medium": null, "large": null }
+    "paypalLinks": {
+      "small": null,
+      "medium": null,
+      "large": null
+    }
   },
   {
     "id": 2,
@@ -27,7 +31,11 @@
     "desc": "Dunhuang flying apsara reimagined in contemporary line work. The silk medium itself echoes the Silk Road that once carried these images westward.",
     "enabled": true,
     "royaltyTierId": "tier-a",
-    "stripeLinks": { "small": null, "medium": null, "large": null }
+    "paypalLinks": {
+      "small": null,
+      "medium": null,
+      "large": null
+    }
   },
   {
     "id": 3,
@@ -42,7 +50,11 @@
     "desc": "A French artist's interpretation of Puyi, the last emperor of China. Part of The Other Gaze — dedicated to non-Eastern artists redefining Oriental themes.",
     "enabled": true,
     "royaltyTierId": "tier-b",
-    "stripeLinks": { "small": null, "medium": null, "large": null }
+    "paypalLinks": {
+      "small": null,
+      "medium": null,
+      "large": null
+    }
   },
   {
     "id": 4,
@@ -57,7 +69,11 @@
     "desc": "The Chinese dragon reimagined as a biomechanical mecha. Ancient mythology meets futuristic engineering in the Eastern Sci-Fi collection.",
     "enabled": true,
     "royaltyTierId": "tier-a",
-    "stripeLinks": { "small": null, "medium": null, "large": null }
+    "paypalLinks": {
+      "small": null,
+      "medium": null,
+      "large": null
+    }
   },
   {
     "id": 5,
@@ -72,7 +88,11 @@
     "desc": "Bruce Lee captured in mid-flow — not a photograph, but an artistic co-creation between illustrator A. Rivera and the LYS studio. Legends Gallery celebrates iconic figures through artistic interpretation.",
     "enabled": true,
     "royaltyTierId": "tier-a",
-    "stripeLinks": { "small": null, "medium": null, "large": null }
+    "paypalLinks": {
+      "small": null,
+      "medium": null,
+      "large": null
+    }
   },
   {
     "id": 6,
@@ -87,7 +107,11 @@
     "desc": "The visual language of jazz — smoky clubs, brass curves, and midnight rhythms — translated into silk. Sonic Echoes explores where sound becomes image.",
     "enabled": true,
     "royaltyTierId": "tier-b",
-    "stripeLinks": { "small": null, "medium": null, "large": null }
+    "paypalLinks": {
+      "small": null,
+      "medium": null,
+      "large": null
+    }
   },
   {
     "id": 7,
@@ -102,7 +126,11 @@
     "desc": "Forbidden City architectural patterns deconstructed into contemporary geometry. Palace Reimagined brings imperial heritage into the 21st century.",
     "enabled": true,
     "royaltyTierId": "tier-a",
-    "stripeLinks": { "small": null, "medium": null, "large": null }
+    "paypalLinks": {
+      "small": null,
+      "medium": null,
+      "large": null
+    }
   },
   {
     "id": 8,
@@ -117,7 +145,11 @@
     "desc": "Erlang Shen, the three-eyed deity of Chinese mythology, rendered in bold contemporary style. Nantian Gate is our character-driven mythology collection.",
     "enabled": true,
     "royaltyTierId": "tier-a",
-    "stripeLinks": { "small": null, "medium": null, "large": null }
+    "paypalLinks": {
+      "small": null,
+      "medium": null,
+      "large": null
+    }
   },
   {
     "id": 9,
@@ -132,7 +164,11 @@
     "desc": "A single plum blossom dissolving into ink wash. Eastern Mood is about negative space, stillness, and the feeling between brushstrokes.",
     "enabled": true,
     "royaltyTierId": "tier-b",
-    "stripeLinks": { "small": null, "medium": null, "large": null }
+    "paypalLinks": {
+      "small": null,
+      "medium": null,
+      "large": null
+    }
   },
   {
     "id": 10,
@@ -147,7 +183,11 @@
     "desc": "A dragon mural found on a Shanghai back alley, photographed and re-rendered for silk. Eastern Street brings urban art into the gallery.",
     "enabled": true,
     "royaltyTierId": "tier-b",
-    "stripeLinks": { "small": null, "medium": null, "large": null }
+    "paypalLinks": {
+      "small": null,
+      "medium": null,
+      "large": null
+    }
   },
   {
     "id": 11,
@@ -162,7 +202,11 @@
     "desc": "A tribute to anime's most iconic cyberpunk moments. Anime Universe celebrates the visual language of Japanese animation, from cel-shading to modern digital.",
     "enabled": true,
     "royaltyTierId": "tier-a",
-    "stripeLinks": { "small": null, "medium": null, "large": null }
+    "paypalLinks": {
+      "small": null,
+      "medium": null,
+      "large": null
+    }
   },
   {
     "id": 12,
@@ -177,7 +221,11 @@
     "desc": "The 1/1 NFT edition of this season's Cinema Collection centerpiece. An original interpretation of The Godfather's iconic silhouette, on silk, with blockchain-verified provenance. Auctioned separately to the highest bidder.",
     "enabled": false,
     "royaltyTierId": null,
-    "stripeLinks": { "small": null, "medium": null, "large": null },
-    "hiddenReason": "NFT 1/1 功能暫不啟用（2026-09-05 軒哥決定，未來重啟時把 enabled 改回 true）"
+    "hiddenReason": "NFT 1/1 功能暫不啟用（2026-09-05 軒哥決定，未來重啟時把 enabled 改回 true）",
+    "paypalLinks": {
+      "small": null,
+      "medium": null,
+      "large": null
+    }
   }
 ]

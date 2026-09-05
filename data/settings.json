@@ -28,10 +28,15 @@
   ],
   "defaultCurrency": "USD",
   "paymentMethods": {
-    "stripe": {
+    "paypal": {
       "enabled": true,
       "merchantName": "Long You Silk",
-      "note": "到 Stripe Dashboard 建立 Payment Links，把連結填入 products[].stripeLinks"
+      "region": "tw",
+      "regionNote": "PayPal 台灣帳戶（軒哥用台灣身份證 + 合作金庫帳戶，匯豐存摺等回台灣再補）",
+      "handle": null,
+      "handleNote": "PayPal.me 短網址（例 seanown 或 longyousilk）。請軒哥到 https://www.paypal.com/paypalme/ 註冊後填入",
+      "fee": "4.4% + 0.3 USD",
+      "note": "PayPal 帳戶本身只要 seanown@gmail.com + 台灣身份證即可開通；銀行帳戶（合作金庫）日後補即可。PayPal.me 連結格式：https://paypal.me/{handle}/{amount}"
     }
   },
   "royaltyTiers": [
@@ -41,7 +46,7 @@
   ],
   "paymentButtons": {
     "small": { "label": "Pay",            "style": "btn-pay-small",   "uses": "list",   "note": "列表 / 收藏牆用，細框線" },
-    "medium":{ "label": "Buy Now",        "style": "btn-add-cart",    "uses": "detail", "note": "商品詳情用，主 CTA 紅實心" },
+    "medium":{ "label": "Buy Now · PayPal","style": "btn-add-cart",   "uses": "detail", "note": "商品詳情用，主 CTA 紅實心" },
     "large": { "label": "Reserve Edition","style": "btn-reserve",     "uses": "hero",   "note": "限量 / 倒數區用，金色壓迫感" }
   },
   "showNftEdition": false,

@@ -99,6 +99,42 @@ th.num{text-align:right;}
 .toast.show{opacity:1;}
 
 .empty-state{padding:48px;text-align:center;color:var(--ink-muted);background:var(--white);border:1px solid var(--line);}
+
+.link-cell{font-size:12px;display:flex;flex-direction:column;gap:3px;}
+.link-cell .ok{color:#0a8a4f;font-size:11px;}
+.link-cell .no{color:var(--ink-muted);font-size:11px;font-style:italic;}
+.settings-card{background:var(--white);border:1px solid var(--line);padding:24px;margin-bottom:18px;}
+.settings-card h3{font-size:15px;font-weight:500;margin-bottom:6px;letter-spacing:.5px;}
+.settings-card .hint{font-size:12px;color:var(--ink-muted);margin-bottom:14px;line-height:1.55;}
+.settings-card .paypal-link-input{display:flex;gap:8px;align-items:center;margin-bottom:8px;}
+.settings-card .paypal-link-input input{flex:1;padding:9px 12px;border:1px solid var(--line);font-family:monospace;font-size:13px;}
+.settings-card .paypal-link-input .small-btn{padding:7px 12px;font-size:12px;}
+.currency-grid{display:grid;grid-template-columns:repeat(auto-fit,minmax(200px,1fr));gap:14px;}
+.currency-grid .currency-item{border:1px solid var(--line);padding:14px;background:var(--ivory);}
+.currency-grid .currency-item .code{font-size:12px;color:var(--ink-muted);margin-bottom:4px;letter-spacing:1px;}
+.currency-grid .currency-item .name{font-size:13px;font-weight:500;margin-bottom:8px;}
+.currency-grid .currency-item .rate-row{display:flex;align-items:center;gap:6px;}
+.currency-grid .currency-item .rate-row span{font-size:13px;}
+.currency-grid .currency-item .rate-row input{width:90px;padding:6px 8px;border:1px solid var(--line);font-size:13px;font-family:monospace;text-align:right;}
+.royalty-grid{display:grid;grid-template-columns:repeat(auto-fit,minmax(280px,1fr));gap:14px;}
+.royalty-grid .royalty-item{border:1px solid var(--line);padding:14px;background:var(--ivory);}
+.royalty-grid .royalty-item .label{font-size:13px;font-weight:500;margin-bottom:10px;letter-spacing:.5px;}
+.royalty-grid .royalty-item .rate-row{display:flex;gap:10px;margin-bottom:6px;align-items:center;font-size:12px;}
+.royalty-grid .royalty-item .rate-row input{width:60px;padding:5px 8px;border:1px solid var(--line);font-size:13px;font-family:monospace;text-align:right;}
+.nft-toggle{display:flex;align-items:center;gap:10px;padding:10px 14px;background:var(--ivory);border:1px solid var(--line);}
+.nft-toggle input[type=checkbox]{width:18px;height:18px;cursor:pointer;}
+.nft-toggle label{cursor:pointer;font-size:13px;flex:1;}
+
+.paypal-status{display:inline-flex;align-items:center;gap:4px;font-size:11px;padding:2px 7px;border:1px solid var(--line);letter-spacing:.3px;}
+.paypal-status.ready{color:#0a8a4f;border-color:rgba(10,138,79,0.3);background:rgba(10,138,79,0.06);}
+.paypal-status.not-ready{color:var(--ink-muted);}
+.paypal-status .dot{width:6px;height:6px;border-radius:50%;background:currentColor;}
+
+.paypal-link-section{margin-top:12px;padding-top:14px;border-top:1px dashed var(--line);}
+.paypal-link-section .section-label{font-size:11px;color:var(--ink-muted);letter-spacing:1px;margin-bottom:8px;}
+.paypal-link-section .link-input-row{display:flex;gap:8px;align-items:center;margin-bottom:8px;}
+.paypal-link-section .link-input-row .size-tag{min-width:60px;font-size:12px;font-weight:500;color:var(--ink-soft);}
+.paypal-link-section .link-input-row input{flex:1;padding:7px 10px;border:1px solid var(--line);font-family:monospace;font-size:12px;}
 </style>
 </head>
 <body>
@@ -119,6 +155,7 @@ th.num{text-align:right;}
     <button class="active" data-tab="products" onclick="switchTab('products')">作品管理</button>
     <button data-tab="exhibitions" onclick="switchTab('exhibitions')">展覽管理</button>
     <button data-tab="applications" onclick="switchTab('applications')">藝術家申請</button>
+    <button data-tab="settings" onclick="switchTab('settings')">支付設定</button>
   </nav>
   <div class="user"><span id="saveHint">已載入</span><a onclick="doLogout()">登出</a></div>
 </header>
@@ -140,7 +177,46 @@ th.num{text-align:right;}
     <div id="exhibitionsTable"></div>
   </section>
 
-  <section id="tab-applications" class="tabpanel">
+  
+  <section id="tab-settings" class="tabpanel">
+    <div class="bar">
+      <div><h2>支付設定</h2><div class="hint">PayPal handle、幣別匯率、分潤階級、NFT 開關。改完按「儲存全部設定」一次寫回。</div></div>
+      <button class="btn" onclick="saveSettings()">儲存全部設定</button>
+    </div>
+
+    <div class="settings-card">
+      <h3>PayPal 帳戶</h3>
+      <div class="hint">到 <a href="https://www.paypal.com/paypalme/" target="_blank" style="color:var(--red)">paypal.com/paypalme</a> 註冊一個短網址（例 `seanown` 或 `longyousilk`），填到下面。前台按鈕會自動組成 <code>https://paypal.me/{handle}/{amount}</code>。沒填 → 按鈕 fallback 為寄信到 seanown@gmail.com。</div>
+      <div class="paypal-link-input">
+        <span style="font-family:monospace;font-size:13px;color:var(--ink-muted);">https://paypal.me/</span>
+        <input id="set_paypal_handle" placeholder="例如 seanown 或 longyousilk" style="flex:1;padding:9px 12px;border:1px solid var(--line);font-family:monospace;font-size:13px;">
+        <button class="btn ghost small small-btn" onclick="testPayPalHandle()">測試連結</button>
+      </div>
+      <div id="paypalHandleStatus" class="hint" style="margin-top:6px;"></div>
+    </div>
+
+    <div class="settings-card">
+      <h3>幣別匯率</h3>
+      <div class="hint">前台幣別切換器用此匯率換算顯示。預設幣別是 USD = 1.00，其他幣別相對 USD。匯率更新請到 <a href="https://www.xe.com" target="_blank" style="color:var(--red)">xe.com</a> 查即時匯率。</div>
+      <div id="currencyEditor" class="currency-grid"></div>
+    </div>
+
+    <div class="settings-card">
+      <h3>藝術家分潤階級</h3>
+      <div class="hint">每件作品掛一個分潤階級。Displate 給 7%，LYS 上限 40%（Tier A · Headlining Artist），這是競爭差異化。改階級會影響商品頁顯示的「Artist Royalty · X%」標籤。</div>
+      <div id="royaltyEditor" class="royalty-grid"></div>
+    </div>
+
+    <div class="settings-card">
+      <h3>NFT 1/1 開關</h3>
+      <div class="hint">NFT 目前暫停（2026-09-05 軒哥決定）。打勾會顯示 NFT edition 區塊 + 第 12 號 The Godfather — Silk Cut 商品；取消隱藏。</div>
+      <div class="nft-toggle">
+        <input type="checkbox" id="set_show_nft">
+        <label for="set_show_nft">啟用 NFT 1/1 edition 顯示</label>
+      </div>
+    </div>
+  </section>
+<section id="tab-applications" class="tabpanel">
     <div class="bar">
       <div><h2>藝術家申請</h2><div class="hint">訪客在網站填的投稿資料會出現在這裡</div></div>
       <button class="btn ghost" onclick="loadApplications()">重新整理</button>
@@ -164,7 +240,7 @@ th.num{text-align:right;}
 
 <script>
 let token = localStorage.getItem('lys_token') || '';
-let products = [], exhibitions = [], categories = [], applications = [];
+let products = [], exhibitions = [], categories = [], applications = [], settings = {};
 
 const $ = id => document.getElementById(id);
 
@@ -204,7 +280,7 @@ async function token_valid(){
   exhibitions  = (await api('/api/data?type=exhibitions')).data || [];
   categories   = (await api('/api/data?type=categories')).data || [];
   applications = (await api('/api/data?type=applications')).data || [];
-  renderProducts(); renderExhibitions(); renderApplications();
+  renderProducts(); renderExhibitions(); renderApplications(); renderSettings();
 }
 
 function switchTab(name){
@@ -231,7 +307,7 @@ function renderProducts(){
     h += '<tr>'
       + '<td>' + (p.image ? '<img class="thumb" src="/'+esc(p.image)+'">' : '<div class="thumb empty">無圖</div>') + '</td>'
       + '<td><div class="name">'+esc(p.name)+'</div><div class="sub">'+esc(p.artist)+'</div></td>'
-      + '<td><span class="sub">'+esc(catName(p.category))+'</span></td>'
+      + '<td><span class="sub">'+esc(catName(p.category))+'</span><div class="link-cell">'+(p.paypalLinks && p.paypalLinks.medium ? '<span class="ok">● PayPal 3/3</span>' : (p.paypalLinks && (p.paypalLinks.small||p.paypalLinks.medium||p.paypalLinks.large) ? '<span class="no">● 部分填</span>' : '<span class="no">● 未填</span>'))+'</div></td>'
       + '<td><span class="tag '+esc(p.edition)+'">'+esc(edLabel[p.edition]||p.edition)+'</span></td>'
       + '<td class="num">$'+Number(p.price).toLocaleString()+'</td>'
       + '<td class="num">'+p.sold+' / '+p.total+'</td>'
@@ -261,6 +337,17 @@ function editProduct(i){
     + '<div class="img-actions"><input id="f_image" value="'+esc(p.image)+'" placeholder="圖片路徑，或按下面的按鈕上傳">'
     + '<input type="file" id="f_file" accept="image/*" style="font-size:12px">'
     + '<span class="sub">上傳後會自動填入路徑</span></div></div></div>'
+    
+    + '<div class="paypal-link-section">'
+    + '<div class="section-label">PAYPAL LINKS（按 size 分三條 PayPal.me 連結，未填則按鈕 fallback 為寄信）</div>'
+    + '<div class="link-input-row"><span class="size-tag">Small</span><input id="f_paypal_small" placeholder="https://paypal.me/handle/890" value="'+(esc((p.paypalLinks||{}).small || ''))+'"></div>'
+    + '<div class="link-input-row"><span class="size-tag">Medium</span><input id="f_paypal_medium" placeholder="https://paypal.me/handle/1280" value="'+(esc((p.paypalLinks||{}).medium || ''))+'"></div>'
+    + '<div class="link-input-row"><span class="size-tag">Large</span><input id="f_paypal_large" placeholder="https://paypal.me/handle/1680" value="'+(esc((p.paypalLinks||{}).large || ''))+'"></div>'
+    + '</div>'
+    + '<div class="field"><label>藝術家分潤階級</label><select id="f_royalty">'
+    + '<option value="">（無分潤）</option>'
+    + (settings.royaltyTiers || []).map(t => '<option value="'+esc(t.id)+'"'+(t.id===p.royaltyTierId?' selected':'')+'>'+esc(t.label)+'</option>').join('')
+    + '</select></div>'
     + '<div class="field"><label>作品介紹</label><textarea id="f_desc">'+esc(p.desc)+'</textarea></div>';
 
   $('f_file').onchange = async e => {
@@ -285,7 +372,13 @@ function editProduct(i){
       id: p.id, name: $('f_name').value.trim(), artist: $('f_artist').value.trim(),
       category: $('f_category').value, edition: $('f_edition').value,
       price: Number($('f_price').value)||0, total: Number($('f_total').value)||0,
-      sold: Number($('f_sold').value)||0, image: $('f_image').value.trim(), desc: $('f_desc').value.trim()
+      sold: Number($('f_sold').value)||0, image: $('f_image').value.trim(), desc: $('f_desc').value.trim(),
+      royaltyTierId: $('f_royalty').value || null,
+      paypalLinks: {
+        small:  $('f_paypal_small').value.trim()  || null,
+        medium: $('f_paypal_medium').value.trim() || null,
+        large:  $('f_paypal_large').value.trim()  || null
+      }
     };
     if(!item.name){ toast('請填作品名稱'); return; }
     if(i===null) products.push(item); else products[i] = item;
@@ -390,6 +483,76 @@ $('modal').addEventListener('click', ev => { if(ev.target.id==='modal') closeMod
 $('pw').addEventListener('keydown', ev => { if(ev.key==='Enter') doLogin(); });
 
 init();
+
+
+// ===== Settings (PayPal / Currencies / Royalty / NFT) =====
+function renderSettings(){
+  if(!settings) settings = {};
+  if(!settings.paymentMethods) settings.paymentMethods = {};
+  if(!settings.paymentMethods.paypal) settings.paymentMethods.paypal = {};
+  if(!settings.currencies) settings.currencies = [];
+  if(!settings.royaltyTiers) settings.royaltyTiers = [];
+  
+  // PayPal handle
+  $('set_paypal_handle').value = settings.paymentMethods.paypal.handle || '';
+  
+  // Currency editor
+  const ce = $('currencyEditor');
+  ce.innerHTML = settings.currencies.map((c,i) => 
+    '<div class="currency-item">'
+    + '<div class="code">'+esc(c.code)+'</div>'
+    + '<div class="name">'+esc(c.label)+' <span style="color:var(--ink-muted);font-weight:400;">('+esc(c.symbol)+')</span></div>'
+    + '<div class="rate-row"><span>1 USD =</span><input type="number" step="0.01" id="cur_rate_'+i+'" value="'+c.rate+'"><span>'+esc(c.code)+'</span></div>'
+    + '</div>'
+  ).join('');
+  
+  // Royalty editor
+  const re = $('royaltyEditor');
+  re.innerHTML = settings.royaltyTiers.map((t,i) => 
+    '<div class="royalty-item">'
+    + '<div class="label">'+esc(t.label)+'</div>'
+    + '<div class="rate-row"><span>Standard 版:</span><input type="number" id="rt_std_'+i+'" value="'+t.rateStandard+'" min="0" max="100"><span>%</span></div>'
+    + '<div class="rate-row"><span>Collector 版:</span><input type="number" id="rt_col_'+i+'" value="'+t.rateCollector+'" min="0" max="100"><span>%</span></div>'
+    + '</div>'
+  ).join('');
+  
+  // NFT toggle
+  $('set_show_nft').checked = !!settings.showNftEdition;
+}
+
+async function saveSettings(){
+  // 收集 PayPal handle
+  settings.paymentMethods.paypal.handle = $('set_paypal_handle').value.trim() || null;
+  
+  // 收集幣別匯率
+  settings.currencies.forEach((c,i) => {
+    const v = Number($('cur_rate_'+i).value);
+    if(v > 0) c.rate = v;
+  });
+  
+  // 收集分潤
+  settings.royaltyTiers.forEach((t,i) => {
+    const s = Number($('rt_std_'+i).value);
+    const c = Number($('rt_col_'+i).value);
+    if(s >= 0 && s <= 100) t.rateStandard = s;
+    if(c >= 0 && c <= 100) t.rateCollector = c;
+  });
+  
+  // NFT
+  settings.showNftEdition = $('set_show_nft').checked;
+  
+  const r = await api('/api/data?type=settings', {method:'POST', body: JSON.stringify(settings)});
+  if(r.ok){ toast('設定已儲存'); renderSettings(); }
+  else { toast('儲存失敗：'+(r.error||'')); }
+}
+
+function testPayPalHandle(){
+  const h = $('set_paypal_handle').value.trim();
+  if(!h){ toast('請先填 PayPal 短網址'); return; }
+  const url = 'https://paypal.me/' + h + '/1';
+  window.open(url, '_blank');
+  $('paypalHandleStatus').innerHTML = '已開啟測試連結：<a href="'+esc(url)+'" target="_blank" style="color:var(--red)">'+esc(url)+'</a><br>如果看到 PayPal 頁面（有金額 USD 1）= 短網址有效。';
+}
 </script>
 </body>
 </html>

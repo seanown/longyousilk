@@ -379,9 +379,9 @@ img { display: block; max-width: 100%; }
   transition: all 0.25s; margin-bottom: 12px; text-transform: uppercase;
 }
 .btn-add-cart:hover { background: var(--red-deep); }
-.btn-add-cart[data-stripe-ready="true"]:hover { background: var(--red-deep); transform: translateY(-1px); box-shadow: 0 6px 20px rgba(160,32,32,0.25); }
-.btn-add-cart[data-stripe-ready="false"] { background: var(--ink-soft); }
-.btn-add-cart[data-stripe-ready="false"]:hover { background: var(--ink); }
+.btn-add-cart[data-paypal-ready="true"]:hover { background: var(--red-deep); transform: translateY(-1px); box-shadow: 0 6px 20px rgba(160,32,32,0.25); }
+.btn-add-cart[data-paypal-ready="false"] { background: var(--ink-soft); }
+.btn-add-cart[data-paypal-ready="false"]:hover { background: var(--ink); }
 .btn-waitlist {
   width: 100%; padding: 18px; border: 1px solid var(--red);
   color: var(--red); font-size: 13px; font-weight: 600;
@@ -399,7 +399,7 @@ img { display: block; max-width: 100%; }
   cursor: pointer;
 }
 .btn-pay-small:hover { border-color: var(--gold); color: var(--gold-dark); }
-.btn-pay-small[data-stripe-ready="false"] { opacity: 0.4; cursor: not-allowed; }
+.btn-pay-small[data-paypal-ready="false"] { opacity: 0.4; cursor: not-allowed; }
 
 .btn-reserve {
   width: 100%; padding: 22px; margin-bottom: 12px;
@@ -418,12 +418,12 @@ img { display: block; max-width: 100%; }
 .btn-reserve:hover::before { opacity: 1; }
 .btn-reserve:hover { color: var(--ink); border-color: var(--gold-light); transform: translateY(-1px); box-shadow: 0 10px 30px rgba(201,169,110,0.3); }
 .btn-reserve span { position: relative; z-index: 1; }
-.btn-reserve[data-stripe-ready="false"] {
+.btn-reserve[data-paypal-ready="false"] {
   background: transparent; border-color: var(--line);
   color: var(--ink-muted); cursor: not-allowed;
 }
-.btn-reserve[data-stripe-ready="false"]:hover { transform: none; box-shadow: none; }
-.btn-reserve[data-stripe-ready="false"]::before { display: none; }
+.btn-reserve[data-paypal-ready="false"]:hover { transform: none; box-shadow: none; }
+.btn-reserve[data-paypal-ready="false"]::before { display: none; }
 
 .btn-stack { display: flex; flex-direction: column; gap: 12px; margin-bottom: 12px; }
 .btn-stack-row { display: flex; gap: 10px; align-items: center; }
@@ -1184,13 +1184,13 @@ function royaltyLabel(p) {
   const rate = p.edition === 'collector' ? tier.rateCollector : tier.rateStandard;
   return tier.label + ' · ' + rate + '%';
 }
-function stripeReady(p, size) {
-  const links = (p && p.stripeLinks) || {};
+function paypalReady(p, size) {
+  const links = (p && p.paypalLinks) || {};
   return !!links[size];
 }
-function stripeOrContact(p, size) {
-  const links = (p && p.stripeLinks) || {};
-  return links[size] || ('mailto:' + (settings.paymentMethods && settings.paymentMethods.stripe ? settings.paymentMethods.stripe.merchantName : 'seanown@gmail.com').toLowerCase().replace(/\s+/g, '') + '@gmail.com?subject=Reserved%20' + encodeURIComponent(p.name));
+function paypalOrContact(p, size) {
+  const links = (p && p.paypalLinks) || {};
+  return links[size] || ('mailto:' + (settings.paymentMethods && settings.paymentMethods.paypal ? settings.paymentMethods.paypal.merchantName : 'seanown@gmail.com').toLowerCase().replace(/\s+/g, '') + '@gmail.com?subject=Reserved%20' + encodeURIComponent(p.name));
 }
 
 // ===== Render: Categories =====
@@ -1229,8 +1229,8 @@ function productCard(p) {
   const badgeClass = p.edition === 'nft' ? 'badge-nft' : p.edition === 'collector' ? 'badge-collector' : 'badge-standard';
   const badgeText = p.edition === 'nft' ? 'NFT 1/1' : p.edition === 'collector' ? "Collector's" : 'Standard';
   const royalty = getRoyalty(p);
-  const payReady = stripeReady(p, 'small');
-  const payHref = stripeOrContact(p, 'small');
+  const payReady = paypalReady(p, 'small');
+  const payHref = paypalOrContact(p, 'small');
   return `<div class="product-card" onclick="openProduct(${p.id})">
     <div class="product-img-wrap">
       <span class="product-badge ${badgeClass}">${badgeText}</span>
@@ -1247,8 +1247,8 @@ function productCard(p) {
         <span class="product-price">${formatPrice(p.price)}</span>
       </div>
       ${soldOut ? '' : `<div style="margin-top:10px;display:flex;gap:8px;align-items:center;">
-        <button class="btn-pay-small" data-stripe-ready="${payReady}" onclick="event.stopPropagation();window.open('${payHref}','_blank');">Pay</button>
-        <span style="font-size:10px;color:var(--ink-muted);letter-spacing:0.5px;">Stripe · ${activeCurrency().code}</span>
+        <button class="btn-pay-small" data-paypal-ready="${payReady}" onclick="event.stopPropagation();window.open('${payHref}','_blank');">Pay</button>
+        <span style="font-size:10px;color:var(--ink-muted);letter-spacing:0.5px;">PayPal · ${activeCurrency().code}</span>
       </div>`}
     </div>
   </div>`;
@@ -1306,10 +1306,10 @@ function renderProductDetail() {
   const royalty = getRoyalty(p);
   const royaltyRate = royalty ? (p.edition === 'collector' ? royalty.rateCollector : royalty.rateStandard) : null;
   const cur = activeCurrency();
-  const buyReady = stripeReady(p, 'medium');
-  const reserveReady = stripeReady(p, 'large');
-  const buyHref = stripeOrContact(p, 'medium');
-  const reserveHref = stripeOrContact(p, 'large');
+  const buyReady = paypalReady(p, 'medium');
+  const reserveReady = paypalReady(p, 'large');
+  const buyHref = paypalOrContact(p, 'medium');
+  const reserveHref = paypalOrContact(p, 'large');
 
   let html = `<div class="detail-layout">
     <div class="detail-gallery">
@@ -1358,10 +1358,10 @@ function renderProductDetail() {
 
       ${soldOut ? `<button class="btn-waitlist">Join Waitlist for Next Drop</button>` : `
         <div class="btn-stack">
-          <button class="btn-reserve" data-stripe-ready="${reserveReady}" onclick="window.open('${reserveHref}','_blank')"><span>Reserve Your Edition</span></button>
-          <button class="btn-add-cart" data-stripe-ready="${buyReady}" onclick="window.open('${buyHref}','_blank')">Buy Now · Stripe</button>
+          <button class="btn-reserve" data-paypal-ready="${reserveReady}" onclick="window.open('${reserveHref}','_blank')"><span>Reserve Your Edition</span></button>
+          <button class="btn-add-cart" data-paypal-ready="${buyReady}" onclick="window.open('${buyHref}','_blank')">Buy Now · PayPal</button>
         </div>
-        <div style="font-size:11px;color:var(--ink-muted);text-align:center;letter-spacing:0.5px;margin-bottom:16px;">Payment via Stripe · ${cur.code} · Secure checkout</div>
+        <div style="font-size:11px;color:var(--ink-muted);text-align:center;letter-spacing:0.5px;margin-bottom:16px;">Payment via PayPal · ${cur.code} · Secure checkout</div>
       `}
 
       ${p.edition === 'nft' && settings.showNftEdition ? `<div class="nft-box">
