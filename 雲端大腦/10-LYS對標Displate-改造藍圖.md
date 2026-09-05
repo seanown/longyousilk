@@ -1,6 +1,7 @@
 # LYS 對標 Displate — 網站改造藍圖
 
-> 2026-09-05。軒哥指示：把 Displate 的網站架構模式拆下來，套到 LYS 上。
+> 2026-09-05 21:00（更新：軒哥拍板金流，本檔對應 commit `e39bdb0`）
+> 軒哥指示：把 Displate 的網站架構模式拆下來，套到 LYS 上。
 > 這份是**分析 + 行動清單**，不是純理論。每一項都標了「LYS 現況」與「要改什麼」。
 
 ---
@@ -160,11 +161,63 @@ Safe Wall Magnet mounting system                 ← 產品差異化
 
 ## 五、🔴 需要軒哥拍板的三題（卡住第一階段）
 
-| # | 問題 | 為什麼卡 |
+| # | 問題 | 為什麼卡 | 軒哥拍板（2026-09-05） |
+|---|---|---|---|
+| **A** | **金流商要用哪個？** | 沒有金流就沒有購物車 | ✅ **Stripe**（國際卡、信用卡/Apple Pay/Google Pay 一次打通；澳門可用，KYC 用護照+銀行帳戶） |
+| **B** | **收款幣別？** | 不同地區客人習慣不同 | ✅ **USD / MOP / HKD / NTD** 四幣別前台切換；Stripe 後台只收 USD，前台用匯率換算顯示 |
+| **C** | **藝術家分潤幾趴？** | 影響招募文案與定價 | ✅ **7-40% 三階制**：tier-a（頭牌/IP 授權）40%、tier-b（簽約）30%、tier-c（新銳）7-15%；NFT 暫不開放 |
+| **D** | **按鈕做幾款 size？** | Displate 有 Pay / Buy Now / Reserve 三種 | ✅ **三款**：小 Pay（列表）/ 中 Buy Now（詳情）/ 大 Reserve Edition（限量區，金色） |
+
+> 對應 commit：`e39bdb0` · feat: Stripe 多幣別 + 7-40% 三階藝術家分潤（NFT 暫不開放）
+
+### 本次實作明細（commit e39bdb0，2026-09-05 21:00）
+
+**改了 3 個檔 / +253 行 / -26 行：**
+
+| 檔案 | 改動 |
+|---|---|
+| `data/settings.json` | 加 currencies（USD/MOP/HKD/NTD 與匯率）、defaultCurrency、paymentMethods.stripe、royaltyTiers 三階、paymentButtons 三款 size、showNftEdition=false |
+| `data/products.json` | 12 件商品全加 royaltyTierId 與 stripeLinks.{small,medium,large}；第 12 號 The Godfather — NFT 設 enabled=false |
+| `index.html` | 加 CSS（btn-pay-small / btn-reserve / currency-switcher / royalty-tag）、nav 加幣別切換器、商品卡加 Pay 小按鈕、詳情頁 Reserve+Buy 雙按鈕接 Stripe Link（含 mailto fallback）、NFT box 條件渲染 |
+
+### 設計亮點
+
+1. **Stripe Payment Links 而非 API 串接**
+   - 不寫一行 Stripe SDK、不存 API key
+   - 軒哥到 Stripe Dashboard 建帳號 → 為每件商品建 3 個 Payment Link → 複製網址
+   - 把網址填回 `products[].stripeLinks.{small,medium,large}`
+   - 商品頁按鈕直接 `window.open(link, '_blank')` 連到 Stripe 收款頁
+
+2. **Stripe Link 缺失降級**
+   - 没填連結時，按鈕變灰但仍可點擊（`data-stripe-ready="false"`）
+   - fallback 為 `mailto:seanown@gmail.com?subject=Reserved%20作品名`
+   - 避免「按下去沒反應」破壞品牌信任
+
+3. **幣別即時切換**
+   - 全部價格（包括 size priceAdd 與 delivery price）即時換算
+   - 不依賴外部匯率 API（先用寫死匯率，下一輪可改 fetch live rates）
+   - 切幣別時 `setCurrency()` 重繪 home-products、shop-products、當前 product detail
+
+4. **NFT 雙道開關**
+   - 商品 `enabled:false` + settings `showNftEdition:false` 兩道獨立
+   - 重啟 NFT 時一個改回 true、一個改回 true，缺一不可（防呆）
+
+5. **三階分潤而非單一比例**
+   - 後台可自己調 `tier-a/b/c` 的 rateStandard 與 rateCollector
+   - 顯示在前台商品頁：`Artist Royalty · 40% · Headlining Artist`
+   - 為未來招募頂級藝術家（如 Bruce Lee IP 衍生）保留 30-40% 空間
+
+### 待做（下一輪）
+
+| # | 項目 | 緊急度 |
 |---|---|---|
-| **A** | **金流商要用哪個？** | 沒有金流就沒有購物車。選項：Stripe（國際卡，最通用）／  PayPal ／ 藍新（台灣）／ 澳門本地支付 |
-| **B** | **收款幣別？** | 目前設定 USD。客人若在澳門／香港／中國，要不要改 MOP / HKD / CNY？ |
-| **C** | **藝術家分潤幾趴？** | 影響招募文案，也影響定價結構。Displate 7–30%，LYS 建議 **30–40%** 才有競爭力 |
+| **F1** | `admin/index.html`：分潤階級編輯、幣別匯率編輯、Stripe Links 編輯區、顯示隱藏 NFT 開關 | 🟡 高（讓軒哥可自改） |
+| **F2** | `build.py` + `lys-preview-backup.html`：把金流邏輯同步到源頭，避免未來重 build 覆蓋 | 🟡 高 |
+| **F3** | For Artists 頁文案：25-30%/35-40%/8-10% → 新三階 7-40% | 🟢 中 |
+| **F4** | 信任標記區塊（博物館級蠶絲 / 可溶解背襯 / 禮盒包裝 / 全球配送） | 🟢 中（第一階段感覺改） |
+| **F5** | 到貨預估（依 IP 判「配送至 [地區] · 約 N 個工作天」） | 🟢 中 |
+| **F6** | 放大稀缺數字：「42 days left **or** until 500 sold」位置 | 🟢 中（最容易的視覺衝擊） |
+| **F7** | 藝術家專頁 | 🔴 等 Stripe 上線後做（配合官網招募） |
 
 ---
 
